@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tyler Ho</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      background: #fefdfb;
+      color: #3a3530;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    button, a {
+      font: inherit;
+    }
+
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 100px;
+      padding: 40px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    .logo,
+    .menu-button,
+    .close-button {
+      pointer-events: auto;
+    }
+
+    .logo {
+      border: 0;
+      background: none;
+      color: #3a3530;
+      font-size: 14px;
+      cursor: pointer;
+      text-transform: lowercase;
+    }
+
+    .menu-button {
+      width: 30px;
+      height: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .menu-button span {
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: #3a3530;
+      transition: transform .25s ease, opacity .25s ease;
+    }
+
+    .menu-button.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .menu-button.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-button.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    .close-button {
+      display: none;
+      width: 30px;
+      height: 30px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      background: none;
+      color: #3a3530;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 320px;
+      height: 100vh;
+      padding: 110px 40px 40px;
+      background: #fefdfb;
+      border-left: 1px solid #ede8e2;
+      z-index: 900;
+      transition: right .3s ease;
+    }
+
+    .side-menu.active {
+      right: 0;
+    }
+
+    .side-menu button {
+      display: block;
+      width: 100%;
+      margin: 0 0 8px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: #3a3530;
+      text-align: left;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .side-menu button:hover {
+      opacity: .6;
+    }
+
+    .menu-caption {
+      margin-bottom: 24px;
+      color: #b8b0a8;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .view {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .home-view {
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .home-main {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 60px;
+    }
+
+    .center-text {
+      max-width: 600px;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .slider-container {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 60px;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 60px;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .slider-center {
+      width: 100%;
+      max-width: 600px;
+      pointer-events: auto;
+    }
+
+    .slider-track {
+      position: relative;
+      width: 100%;
+      height: 1px;
+      margin-bottom: 10px;
+      background: #d9d3cc;
+      cursor: pointer;
+    }
+
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #3a3530;
+      transform: translate(-50%, -50%);
+      cursor: grab;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      color: #7a7070;
+      font-size: 11px;
+      text-transform: lowercase;
+    }
+
+    .site-footer {
+      position: fixed;
+      inset: auto 0 0 0;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 24px;
+      padding: 0 60px;
+      background: #fefdfb;
+      border-top: 1px solid #ede8e2;
+      z-index: 40;
+    }
+
+    .site-footer a {
+      color: #7a7070;
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      opacity: .6;
+    }
+
+    .section-main {
+      width: 100%;
+      min-height: 100vh;
+      padding: 110px 60px 60px;
+    }
+
+    .section-main.centered {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .section-shell {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      margin-bottom: 60px;
+      color: #7a7070;
+      font-size: 14px;
+      text-transform: lowercase;
+    }
+
+    .centered .page-title {
+      margin-bottom: 20px;
+    }
+
+    .page-content {
+      color: #7a7070;
+      font-size: 14px;
+      text-transform: lowercase;
+    }
+
+    .field-intro {
+      margin-bottom: 34px;
+      max-width: 740px;
+      color: #7a7070;
+      font-size: 14px;
+      text-transform: lowercase;
+      line-height: 1.8;
+    }
+
+    .report-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      padding: 32px;
+      border: 1px solid #ede8e2;
+    }
+
+    .report-card-image {
+      flex: 0 0 280px;
+      width: 280px;
+      display: block;
+    }
+
+    .report-card-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .report-card-copy {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .report-card-category {
+      color: #7a7070;
+      font-size: 12px;
+      text-transform: lowercase;
+      letter-spacing: .04em;
+    }
+
+    .report-card-title {
+      margin: 0;
+      color: #3a3530;
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 400;
+    }
+
+    .report-card-description {
+      margin: 0;
+      color: #3a3530;
+      font-size: 15px;
+      line-height: 1.8;
+      max-width: 680px;
+    }
+
+    .report-card-action {
+      color: #3a3530;
+      font-size: 14px;
+      text-decoration: none;
+      border-bottom: 1px solid #3a3530;
+      padding-bottom: 2px;
+      width: max-content;
+    }
+
+    .report-card-action:hover {
+      opacity: .75;
+    }
+
+    .essay {
+      color: #3a3530;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .essay h2 {
+      margin: 40px 0 20px;
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    .essay h2:first-child {
+      margin-top: 0;
+    }
+
+    .essay h3 {
+      margin: 30px 0 12px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .essay p {
+      margin-bottom: 16px;
+    }
+
+    .essay ul,
+    .essay ol {
+      margin: 0 0 16px 24px;
+    }
+
+    .essay li {
+      margin-bottom: 8px;
+    }
+
+    .essay strong {
+      font-weight: 500;
+    }
+
+    .section-break {
+      margin: 40px 0;
+      padding-top: 40px;
+      border-top: 1px solid #ede8e2;
+    }
+
+    @media (max-width: 768px) {
+      .site-header {
+        padding: 30px 24px;
+      }
+
+      .home-main,
+      .slider-container,
+      .section-main {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .center-text {
+        font-size: 14px;
+      }
+
+      .site-footer {
+        padding: 0 24px;
+        gap: 18px;
+      }
+
+      .side-menu {
+        width: 82vw;
+        right: -82vw;
+      }
+
+      .report-card {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .report-card-image {
+        width: 100%;
+        flex: 1 1 auto;
+      }
+
+      .report-card-copy {
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <button class="logo" type="button" onclick="showHome()">tyler ho</button>
+
+    <button class="menu-button" id="menuButton" type="button" aria-label="Open menu" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <button class="close-button" id="closeButton" type="button" aria-label="Return home" onclick="showHome()">&times;</button>
+  </header>
+
+  <nav class="side-menu" id="sideMenu">
+    <button type="button" onclick="showSection('selected-work')">selected work</button>
+    <div class="menu-caption">systems, research, tools</div>
+
+    <button type="button" onclick="showSection('field-notes')">field notes</button>
+    <div class="menu-caption">essays, fragments, observations</div>
+
+    <button type="button" onclick="showSection('archive')">archive</button>
+    <div class="menu-caption">images, places, references</div>
+  </nav>
+
+  <section class="view home-view active" id="home">
+    <main class="home-main">
+      <p class="center-text" id="centerText"></p>
+    </main>
+
+    <div class="slider-container">
+      <div class="slider-center">
+        <div class="slider-track" id="sliderTrack">
+          <div class="slider-handle" id="sliderHandle"></div>
+        </div>
+        <div class="slider-labels">
+          <span>where it started</span>
+          <span>where it's going</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <a href="https://www.instagram.com/tylerho.mp4" target="_blank" rel="noopener noreferrer">instagram</a>
+      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">twitter</a>
+      <a href="https://www.linkedin.com/in/tylerho1" target="_blank" rel="noopener noreferrer">linkedin</a>
+    </footer>
+  </section>
+
+  <section class="view" id="selected-work">
+    <main class="section-main centered">
+      <div class="page-title">selected work</div>
+      <div class="page-content">coming soon</div>
+    </main>
+  </section>
+
+  <section class="view" id="field-notes">
+    <main class="section-main">
+      <div class="section-shell">
+        <div class="page-title">field notes</div>
+        <div class="field-intro">notes, research, and operating ideas on businesses, ownership, and value creation.</div>
+        <div class="report-card">
+          <a class="report-card-image" href="commercial-cleaning-value-creation-plan.pdf" target="_blank" rel="noopener noreferrer">
+            <img src="commercial-cleaning-cover.png" alt="Commercial cleaning cover" />
+          </a>
+          <div class="report-card-copy">
+            <div class="report-card-category">private equity operations</div>
+            <h2 class="report-card-title">a value creation plan for commercial cleaning & janitorial services</h2>
+            <p class="report-card-description">an operating thesis on building value through labor discipline, pricing, procurement, technology, and add-on acquisitions.</p>
+            <a class="report-card-action" href="commercial-cleaning-value-creation-plan.pdf" download>download report ↓</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <section class="view" id="archive">
+    <main class="section-main centered">
+      <div class="page-title">archive</div>
+      <div class="page-content">coming soon</div>
+    </main>
+  </section>
+
+  <script>
+    const chapters = [
+      `hey, it's tyler – nice to see you. this website is always changing as i change. i'm probably more like you than different. one thing about me is that i'm an extreme extrovert, and oddly, i don't have social anxiety. i like deep conversations, building on ideas, and finding new ways to live through people. i'm interested in spaces where technology, taste, and ambition meet (let's do it over food!). just like you, i'm learning how to build a life of meaningful work, but also do it with happiness. i'm still figuring things out, but i know i like building, learning through people, and finding new ways to live.`,
+      `i grew up in southern california. i used to share a house with three families. i was always curious about anything, and one day in third grade, my dad gave me a book: rich dad poor dad. since then, i have read maybe 100+ personal books, but that one gave me my first hand at finance and how to work with people. my first inch toward real productivity started there.`,
+      `in middle school, i had a failed vending machine business. it was fun while it lasted. later, in early high school, sneakers became my first real lesson in business. i got scammed. i bought bad shoes. i lost money. but all failures lead to success one day, and i didn't let that stop me. taste, timing, demand, trust, and resale all became tangible. eventually, i started flipping shoes and made a "fortune" in kids' terms. on a high level, i learned two things: everything is some version of buy low, sell higher, and you can bargain / sell your way into almost anything.`,
+      `on a more personal side, i joined a couple of really cool volunteering organizations. i remember when i was younger, i would go with my church to homeless shelters. those experiences pained me at a young age. i was told that i made their day. why? all i did was smile. just smile. i think that experience taught me that people just want to be seen; make someone's day better. i wanted to carry that side with me. the first organization i joined – operation be kind – was to serve those in my area, passing around goodie bags that i created with deodorant, toothbrushes, toothpaste, and other essentials. this was one of my first times building an understanding of empathy. the second was the arthritis organization. after my mother got arthritis, i made it personal to spread awareness about the issue. every year, i plan a 5k run at angels stadium with colleagues to raise over 500k for people suffering from arthritis.`,
+      `after graduating high school, i'm not sure how i felt. i still didn't know myself (i still don't), but i was determined to try to find myself. i started reading a lot of self-help books. (i need to get on reading all the religious texts.) this time frame of my life is contextualized by elon musk talking about the hitchhiker's guide to the galaxy and trying to ask the right questions to figure out an endpoint – the meaning of who we are. something relevant to purpose: i have noticed that parents often have children to give themselves purpose and to relive the joys they once had through their children. hopefully, we find something that feels like a child to us. i digress, but my readings challenged me to question everything. funny enough, i ended up working at a startup. those days were 996 at 17 years old. i realized that working startup hours taught me the difference between liking entrepreneurship and actually executing. it also taught me that life is a game of leverage.`,
+      `i came to uc irvine. had a ton of fun. joined a business fraternity. but i did find what i really enjoyed – it was finance (i blame my sneaker business). i set my north star for investment banking; i didn't know if i was going to get there. but this process shaped the way i interact, how i view conversations, what i consider productive, how i curate the right environment around me, how i structure my thoughts, and how i reach a bit farther and stretch a little. i used to worry about things, but after recruiting, it taught me to focus on what was in my control. i used to stress, but stress meant that i had things to do (it was a biological function of who we are). i used to not open up emotionally, but that process forced me to. many nights of screen staring, pressing the send email button, and reading more books got me there. i eventually got there. that reaffirmed one of the core mottos in my life: "manifest it." you are only one yes away. multiply your luck. the goalpost has since moved.`,
+      `this paragraph marks a closing remark. i am taking a gap year for 2026–2027 to find something meaningful to work toward. i am doing a bit of venture work, exploring eta, working a summer in new york, meeting founders, and eating tons of pizza. long term, i hope to be a better person than i was yesterday.`
+    ];
+
+    let currentChapter = 0;
+    let dragging = false;
+
+    const centerText = document.getElementById('centerText');
+    const sliderTrack = document.getElementById('sliderTrack');
+    const sliderHandle = document.getElementById('sliderHandle');
+    const menuButton = document.getElementById('menuButton');
+    const closeButton = document.getElementById('closeButton');
+    const sideMenu = document.getElementById('sideMenu');
+
+    function updateChapter() {
+      centerText.textContent = chapters[currentChapter];
+      sliderHandle.style.left = `${(currentChapter / (chapters.length - 1)) * 100}%`;
+    }
+
+    function toggleMenu() {
+      sideMenu.classList.toggle('active');
+      menuButton.classList.toggle('active');
+    }
+
+    function closeMenu() {
+      sideMenu.classList.remove('active');
+      menuButton.classList.remove('active');
+    }
+
+    function showHome() {
+      document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+      document.getElementById('home').classList.add('active');
+      menuButton.style.display = 'flex';
+      closeButton.style.display = 'none';
+      closeMenu();
+      document.body.style.overflowY = 'hidden';
+      window.scrollTo(0, 0);
+      history.replaceState(null, '', '#home');
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      menuButton.style.display = 'none';
+      closeButton.style.display = 'flex';
+      closeMenu();
+      document.body.style.overflowY = 'auto';
+      window.scrollTo(0, 0);
+      history.replaceState(null, '', `#${id}`);
+    }
+
+    function chapterFromClientX(clientX) {
+      const rect = sliderTrack.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      currentChapter = Math.round(ratio * (chapters.length - 1));
+      updateChapter();
+    }
+
+    sliderTrack.addEventListener('click', e => chapterFromClientX(e.clientX));
+    sliderHandle.addEventListener('mousedown', () => dragging = true);
+    document.addEventListener('mousemove', e => {
+      if (dragging) chapterFromClientX(e.clientX);
+    });
+    document.addEventListener('mouseup', () => dragging = false);
+
+    sliderTrack.addEventListener('touchstart', e => {
+      dragging = true;
+      chapterFromClientX(e.touches[0].clientX);
+    }, { passive: true });
+
+    document.addEventListener('touchmove', e => {
+      if (dragging) chapterFromClientX(e.touches[0].clientX);
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => dragging = false);
+
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('home').classList.contains('active')) return;
+
+      if (e.key === 'ArrowRight') {
+        currentChapter = Math.min(chapters.length - 1, currentChapter + 1);
+        updateChapter();
+      }
+
+      if (e.key === 'ArrowLeft') {
+        currentChapter = Math.max(0, currentChapter - 1);
+        updateChapter();
+      }
+    });
+
+    const initialView = location.hash.replace('#', '');
+    if (['selected-work', 'field-notes', 'archive'].includes(initialView)) {
+      showSection(initialView);
+    } else {
+      showHome();
+    }
+
+    updateChapter();
+  </script>
+</body>
+</html>
