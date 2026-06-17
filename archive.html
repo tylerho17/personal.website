@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive — Tyler Ho</title>
+    <style>
+        /* ─── reset ─── */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #fefdfb;
+            color: #3a3530;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ─── header ─── */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .logo {
+            font-size: 14px;
+            font-weight: 400;
+            color: #3a3530;
+            pointer-events: auto;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .hamburger {
+            width: 30px; height: 20px;
+            display: flex; flex-direction: column;
+            justify-content: space-between;
+            background: none; border: none;
+            cursor: pointer; padding: 0;
+            pointer-events: auto;
+        }
+        .hamburger span {
+            width: 100%; height: 1px;
+            background-color: #3a3530;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        /* ─── nav drawer ─── */
+        nav {
+            position: fixed;
+            top: 0; right: -300px;
+            width: 300px; height: 100vh;
+            background-color: #fefdfb;
+            padding: 100px 40px 40px;
+            z-index: 199;
+            transition: right 0.3s ease;
+            border-left: 1px solid #ede8e2;
+        }
+        nav.active { right: 0; }
+        nav a {
+            display: block; font-size: 14px;
+            color: #3a3530; text-decoration: none;
+            margin-bottom: 8px; font-weight: 400;
+            transition: opacity 0.2s;
+        }
+        nav a:hover { opacity: 0.6; }
+        .menu-caption {
+            font-size: 11px; color: #b8b0a8;
+            margin-bottom: 24px; line-height: 1.4;
+        }
+
+        /* ─── page intro ─── */
+        .page-header {
+            padding: 104px 40px 16px;
+        }
+        .page-eyebrow {
+            font-size: 11px;
+            color: #b8b0a8;
+            letter-spacing: 0.09em;
+            margin-bottom: 5px;
+        }
+        .page-desc {
+            font-size: 12px;
+            color: #7a7070;
+            line-height: 1.6;
+            max-width: 400px;
+        }
+
+        /* ─── archive canvas ─── */
+        .archive-canvas {
+            padding: 0 32px 80px;
+        }
+
+        /* ─── polaroid row ─── */
+        .polaroid-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        /* ─── polaroid card ─── */
+        .polaroid {
+            background: #faf8f4;
+            padding: 8px 8px 26px;
+            box-shadow:
+                0 1px 3px rgba(58,53,48,0.07),
+                0 4px 16px rgba(58,53,48,0.09),
+                0 12px 40px rgba(58,53,48,0.06);
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            transition: box-shadow 0.28s ease;
+        }
+        /* The hover lift is set in JS to preserve individual rotation */
+        .polaroid-photo {
+            display: block;
+            width: 100%;
+            object-fit: cover;
+            background: #e4dfd8;
+        }
+        .polaroid-photo.square   { aspect-ratio: 1 / 1; }
+        .polaroid-photo.portrait { aspect-ratio: 3 / 4; }
+        .polaroid-photo.landscape { aspect-ratio: 4 / 3; }
+
+        .polaroid-caption {
+            padding-top: 7px;
+        }
+        .polaroid-date {
+            font-size: 9.5px;
+            color: #7a7070;
+            font-weight: 400;
+        }
+        .polaroid-loc {
+            font-size: 9.5px;
+            color: #b8b0a8;
+            margin-top: 1px;
+        }
+
+        /* ─── modal overlay ─── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 23, 20, 0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ─── flip card ─── */
+        .flip-wrapper {
+            width: min(460px, 88vw);
+            perspective: 1400px;
+            position: relative;
+        }
+        .flip-card {
+            position: relative;
+            width: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .flip-card.flipped { transform: rotateY(180deg); }
+
+        .card-face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            background: #faf8f4;
+        }
+        .card-front {
+            padding: 16px 16px 44px;
+            box-shadow:
+                0 2px 8px rgba(26,23,20,0.12),
+                0 16px 60px rgba(26,23,20,0.28),
+                0 40px 100px rgba(26,23,20,0.18);
+        }
+        .card-back {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+            padding: 36px 36px 44px;
+            box-shadow:
+                0 2px 8px rgba(26,23,20,0.12),
+                0 16px 60px rgba(26,23,20,0.28),
+                0 40px 100px rgba(26,23,20,0.18);
+        }
+
+        .card-img {
+            display: block;
+            width: 100%;
+            object-fit: cover;
+            background: #e4dfd8;
+        }
+        .card-img.square   { aspect-ratio: 1 / 1; }
+        .card-img.portrait { aspect-ratio: 3 / 4; }
+        .card-img.landscape { aspect-ratio: 4 / 3; }
+
+        .card-front-meta { padding-top: 14px; }
+        .card-title {
+            font-size: 13px;
+            color: #3a3530;
+            margin-bottom: 3px;
+        }
+        .card-date {
+            font-size: 11px;
+            color: #7a7070;
+        }
+        .card-loc {
+            font-size: 11px;
+            color: #b8b0a8;
+            margin-top: 1px;
+        }
+        .flip-hint {
+            font-size: 10px;
+            color: #c4bdb5;
+            letter-spacing: 0.07em;
+            margin-top: 14px;
+        }
+
+        /* back face */
+        .back-header {
+            font-size: 10px;
+            color: #c4bdb5;
+            letter-spacing: 0.12em;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #ede8e2;
+            padding-bottom: 14px;
+        }
+        .back-field { margin-bottom: 22px; }
+        .back-key {
+            font-size: 10px;
+            color: #b8b0a8;
+            letter-spacing: 0.1em;
+            margin-bottom: 5px;
+        }
+        .back-value {
+            font-size: 13px;
+            color: #3a3530;
+            line-height: 1.7;
+        }
+        .back-hint {
+            font-size: 10px;
+            color: #c4bdb5;
+            letter-spacing: 0.07em;
+            margin-top: 24px;
+        }
+
+        /* ─── modal nav ─── */
+        .modal-close {
+            position: fixed;
+            top: 34px; right: 48px;
+            background: none; border: none;
+            color: rgba(250,248,244,0.65);
+            font-size: 22px; line-height: 1;
+            cursor: pointer; padding: 6px;
+            z-index: 1002;
+            transition: color 0.2s;
+            font-family: inherit;
+        }
+        .modal-close:hover { color: rgba(250,248,244,1); }
+
+        .modal-nav-row {
+            position: absolute;
+            bottom: -50px;
+            left: 0; right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-btn {
+            background: none; border: none;
+            color: rgba(250,248,244,0.6);
+            font-size: 17px;
+            cursor: pointer; padding: 8px 4px;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+        .nav-btn:hover { color: rgba(250,248,244,1); }
+        .nav-btn:disabled { color: rgba(250,248,244,0.2); cursor: default; }
+        .modal-counter {
+            font-size: 10px;
+            color: rgba(250,248,244,0.45);
+            letter-spacing: 0.12em;
+        }
+
+        /* ─── responsive ─── */
+        @media (max-width: 768px) {
+            header { padding: 28px 24px; }
+            .page-header { padding: 110px 24px 36px; }
+            .archive-canvas { padding: 0 16px 120px; }
+            .modal-close { top: 18px; right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── header ── -->
+<header>
+    <a class="logo" href="index-redesign_23_1.html">tyler ho</a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+    </button>
+</header>
+
+<!-- ── nav ── -->
+<nav id="menu">
+    <a href="selected-work.html" onclick="closeMenu()">selected work</a>
+    <div class="menu-caption">systems, research, tools</div>
+    <a href="field-notes.html" onclick="closeMenu()">field notes</a>
+    <div class="menu-caption">essays, fragments, observations</div>
+    <a href="archive.html" onclick="closeMenu()">archive</a>
+    <div class="menu-caption">images, places, references</div>
+</nav>
+
+<!-- ── page intro ── -->
+<div class="page-header">
+    <div class="page-eyebrow">archive</div>
+    <div class="page-desc">images, places, and fragments that shaped how i see.</div>
+</div>
+
+<!-- ── archive grid (rendered by JS) ── -->
+<main class="archive-canvas" id="archiveCanvas"></main>
+
+<!-- ── modal ── -->
+<div class="modal-overlay" id="modalOverlay" onclick="onOverlayClick(event)">
+    <button class="modal-close" onclick="closeModal()">&#215;</button>
+
+    <div class="flip-wrapper">
+        <div class="flip-card" id="flipCard" onclick="flipCard()">
+
+            <!-- front -->
+            <div class="card-face card-front">
+                <img class="card-img" id="mPhoto" src="" alt="" loading="lazy">
+                <div class="card-front-meta">
+                    <div class="card-title" id="mTitle"></div>
+                    <div class="card-date" id="mDate"></div>
+                    <div class="card-loc" id="mLoc"></div>
+                    <div class="flip-hint">tap to read &rarr;</div>
+                </div>
+            </div>
+
+            <!-- back -->
+            <div class="card-face card-back">
+                <div class="back-header">notes</div>
+                <div class="back-field">
+                    <div class="back-key">what</div>
+                    <div class="back-value" id="bWhat"></div>
+                </div>
+                <div class="back-field">
+                    <div class="back-key">meaning</div>
+                    <div class="back-value" id="bMeaning"></div>
+                </div>
+                <div class="back-field">
+                    <div class="back-key">reflection</div>
+                    <div class="back-value" id="bReflection"></div>
+                </div>
+                <div class="back-hint">&larr; tap to flip back</div>
+            </div>
+
+        </div>
+
+        <!-- nav controls -->
+        <div class="modal-nav-row">
+            <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">&#8592;</button>
+            <span class="modal-counter" id="mCounter"></span>
+            <button class="nav-btn" id="nextBtn" onclick="navigate(1)">&#8594;</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* =============================================================
+   DATA
+   Add new entries here. Oldest first.
+============================================================= */
+const ARCHIVE = [
+    {
+        id: 1,
+        image: 'https://picsum.photos/seed/tho-01/600/600',
+        aspect: 'square',
+        date: 'june 2018',
+        year: 2018,
+        location: 'anaheim, california',
+        title: 'the garage',
+        description: 'the garage where we kept everything that didn\'t fit anywhere else.',
+        meaning: 'the place i first understood that space shapes thought. everything in that garage was waiting to become something else.',
+        reflection: 'i think a lot about what we hold onto and why. this garage had my dad\'s tools, my old shoes, boxes of books. all of it patient.',
+        alt: 'a garage in anaheim filled with boxes and tools',
+    },
+    {
+        id: 2,
+        image: 'https://picsum.photos/seed/tho-02/480/640',
+        aspect: 'portrait',
+        date: 'august 2018',
+        year: 2018,
+        location: 'los angeles, california',
+        title: 'first train ride alone',
+        description: 'first time taking the metro by myself at 15.',
+        meaning: 'small freedom. the kind you don\'t realize is big until later.',
+        reflection: 'independence starts with a transit card and no one to answer to for an afternoon.',
+        alt: 'blurred metro window at dusk',
+    },
+    {
+        id: 3,
+        image: 'https://picsum.photos/seed/tho-03/640/480',
+        aspect: 'landscape',
+        date: 'november 2019',
+        year: 2019,
+        location: 'orange county, california',
+        title: 'the book',
+        description: 'rich dad poor dad, the edition my dad gave me in third grade.',
+        meaning: 'the first time i thought about money as something you could understand, not just earn.',
+        reflection: 'that book had dog-ears and margin notes i didn\'t write. someone else had read it before me. i thought about what they built.',
+        alt: 'worn paperback book open on a table',
+    },
+    {
+        id: 4,
+        image: 'https://picsum.photos/seed/tho-04/600/600',
+        aspect: 'square',
+        date: 'march 2020',
+        year: 2020,
+        location: 'anaheim, california',
+        title: 'lockdown light',
+        description: 'light through the kitchen window during the first week of lockdown.',
+        meaning: 'everything slowed down and i finally noticed what was always there.',
+        reflection: 'the pandemic made me a better observer. bad for everything else. good for that.',
+        alt: 'soft morning light through a kitchen window',
+    },
+    {
+        id: 5,
+        image: 'https://picsum.photos/seed/tho-05/480/640',
+        aspect: 'portrait',
+        date: 'july 2021',
+        year: 2021,
+        location: 'irvine, california',
+        title: 'move-in day',
+        description: 'my dorm room at uc irvine, half-empty.',
+        meaning: 'blank space is possibility. i stood there a long time before unpacking.',
+        reflection: 'i learned more from the people i lived near than any class. proximity is underrated.',
+        alt: 'empty dorm room with morning sunlight',
+    },
+    {
+        id: 6,
+        image: 'https://picsum.photos/seed/tho-06/600/600',
+        aspect: 'square',
+        date: 'october 2021',
+        year: 2021,
+        location: 'irvine, california',
+        title: 'late night library',
+        description: 'langson library at 2am during recruiting season.',
+        meaning: 'i sent 200 emails that fall. one changed my life.',
+        reflection: 'the most important work often happens in the quietest, most unglamorous places.',
+        alt: 'empty library desks at night with fluorescent light',
+    },
+    {
+        id: 7,
+        image: 'https://picsum.photos/seed/tho-07/640/480',
+        aspect: 'landscape',
+        date: 'january 2022',
+        year: 2022,
+        location: 'anaheim, california',
+        title: 'arthritis 5k setup',
+        description: 'setting up for the arthritis 5k at angels stadium before sunrise.',
+        meaning: 'sometimes you make something personal into something larger. this was one of those times.',
+        reflection: 'i thought i was doing this for my mom. eventually i understood i was also doing it for myself.',
+        alt: 'early morning stadium setup with banners and cones',
+    },
+    {
+        id: 8,
+        image: 'https://picsum.photos/seed/tho-08/600/600',
+        aspect: 'square',
+        date: 'june 2022',
+        year: 2022,
+        location: 'new york city',
+        title: 'first morning in new york',
+        description: 'corner of bleecker and 6th, 8am, first morning in the city.',
+        meaning: 'i understood immediately why people fall for this place.',
+        reflection: 'cities have personalities. new york\'s feels like pressure that becomes energy if you let it.',
+        alt: 'busy new york street corner at morning',
+    },
+    {
+        id: 9,
+        image: 'https://picsum.photos/seed/tho-09/480/640',
+        aspect: 'portrait',
+        date: 'december 2022',
+        year: 2022,
+        location: 'anaheim, california',
+        title: 'christmas table',
+        description: 'christmas dinner table, my grandmother\'s dishes.',
+        meaning: 'you can leave, grow, and return to find the same warmth.',
+        reflection: 'i don\'t take this for granted anymore.',
+        alt: 'holiday dinner table with warm lighting and ceramic dishes',
+    },
+    {
+        id: 10,
+        image: 'https://picsum.photos/seed/tho-10/640/480',
+        aspect: 'landscape',
+        date: 'april 2023',
+        year: 2023,
+        location: 'san francisco, california',
+        title: 'first founder meeting',
+        description: 'a coffee shop in soma. first real conversation with a founder.',
+        meaning: 'i learned that vision without execution is just a dream, and i wanted both.',
+        reflection: 'the best conversations feel like collaboration even when you\'re just listening.',
+        alt: 'coffee shop table with notebooks and a pour-over',
+    },
+    {
+        id: 11,
+        image: 'https://picsum.photos/seed/tho-11/600/600',
+        aspect: 'square',
+        date: 'september 2023',
+        year: 2023,
+        location: 'irvine, california',
+        title: 'graduation',
+        description: 'bren events center, waiting in the corridor before the ceremony.',
+        meaning: 'the feeling wasn\'t joy. it was something quieter. readiness.',
+        reflection: 'endings are always also beginnings. i was more focused on the next thing than the ceremony.',
+        alt: 'graduation gown in a crowded arena hallway',
+    },
+    {
+        id: 12,
+        image: 'https://picsum.photos/seed/tho-12/480/640',
+        aspect: 'portrait',
+        date: 'february 2024',
+        year: 2024,
+        location: 'new york city',
+        title: 'february window',
+        description: 'my window on the upper east side, winter.',
+        meaning: 'it was cold and i didn\'t care. this city in winter is its most honest.',
+        reflection: 'there\'s something about discomfort that clarifies what you actually want.',
+        alt: 'winter new york skyline through a frost-rimmed window',
+    },
+    {
+        id: 13,
+        image: 'https://picsum.photos/seed/tho-13/640/480',
+        aspect: 'landscape',
+        date: 'july 2024',
+        year: 2024,
+        location: 'new york city',
+        title: 'central park tuesday',
+        description: 'central park, a tuesday afternoon in july.',
+        meaning: 'i finally understood what it means to be unhurried in a hurried place.',
+        reflection: 'the people who looked most at peace in new york were the ones who had stopped trying to keep up.',
+        alt: 'central park lawn with people and dappled light',
+    },
+    {
+        id: 14,
+        image: 'https://picsum.photos/seed/tho-14/600/600',
+        aspect: 'square',
+        date: 'march 2025',
+        year: 2025,
+        location: 'los angeles, california',
+        title: 'pizza and ideas',
+        description: 'dinner with founders somewhere in silverlake.',
+        meaning: 'most good ideas i\'ve heard started like this. informal, late, around food.',
+        reflection: 'you learn more about someone\'s vision at dinner than in a pitch deck.',
+        alt: 'pizza and notebooks on a restaurant table at night',
+    },
+    {
+        id: 15,
+        image: 'https://picsum.photos/seed/tho-15/480/640',
+        aspect: 'portrait',
+        date: 'january 2026',
+        year: 2026,
+        location: 'new york city',
+        title: 'gap year begins',
+        description: 'first morning of the gap year. coffee, notebook, nothing planned.',
+        meaning: 'intentional uncertainty. rare and uncomfortable and worth it.',
+        reflection: 'i wrote the word "begin" at the top of a blank page and didn\'t write anything else for an hour.',
+        alt: 'notebook and coffee on a marble countertop, morning light',
+    },
+];
+
+/* =============================================================
+   LAYOUT CONFIG
+   Each row config defines [n] slot objects:
+     rot   – CSS rotation in degrees
+     mt    – margin-top in px (vertical stagger)
+     ml    – margin-left (CSS string, e.g. "6%")
+     wFrac – card width as fraction of archive-canvas width
+============================================================= */
+const ROW_TEMPLATES = [
+    // 5-up default
+    [
+        { rot: -1.4, mt: 4, ml: '0.5%', wFrac: 0.168 },
+        { rot:  1.1, mt: 0, ml: '1%',   wFrac: 0.162 },
+        { rot: -0.7, mt: 6, ml: '1%',   wFrac: 0.167 },
+        { rot:  1.6, mt: 2, ml: '1%',   wFrac: 0.162 },
+        { rot: -1.0, mt: 5, ml: '1%',   wFrac: 0.165 },
+    ],
+    // 5-up alternate
+    [
+        { rot:  1.2, mt: 0, ml: '0.5%', wFrac: 0.165 },
+        { rot: -1.6, mt: 5, ml: '1%',   wFrac: 0.162 },
+        { rot:  0.5, mt: 2, ml: '1%',   wFrac: 0.168 },
+        { rot: -1.1, mt: 4, ml: '1%',   wFrac: 0.162 },
+        { rot:  1.8, mt: 1, ml: '1%',   wFrac: 0.165 },
+    ],
+    // 5-up tighter stagger
+    [
+        { rot: -1.8, mt: 2, ml: '0.5%', wFrac: 0.162 },
+        { rot:  1.3, mt: 0, ml: '1%',   wFrac: 0.167 },
+        { rot: -0.5, mt: 5, ml: '1%',   wFrac: 0.162 },
+        { rot:  1.9, mt: 1, ml: '1%',   wFrac: 0.165 },
+        { rot: -1.2, mt: 4, ml: '1%',   wFrac: 0.162 },
+    ],
+    // 4-up (remainder)
+    [
+        { rot: -1.2, mt: 4, ml: '1%',   wFrac: 0.175 },
+        { rot:  1.5, mt: 0, ml: '1.5%', wFrac: 0.175 },
+        { rot: -0.8, mt: 6, ml: '1.5%', wFrac: 0.172 },
+        { rot:  1.0, mt: 2, ml: '1.5%', wFrac: 0.172 },
+    ],
+    // 3-up (remainder)
+    [
+        { rot: -1.0, mt: 3, ml: '2%',   wFrac: 0.180 },
+        { rot:  1.4, mt: 0, ml: '2%',   wFrac: 0.180 },
+        { rot: -0.7, mt: 5, ml: '2%',   wFrac: 0.178 },
+    ],
+    // 2-up (remainder)
+    [
+        { rot:  0.9, mt: 0, ml: '2%',   wFrac: 0.182 },
+        { rot: -1.3, mt: 4, ml: '2%',   wFrac: 0.180 },
+    ],
+    // 1-up (remainder)
+    [
+        { rot: -0.8, mt: 2, ml: '2%',   wFrac: 0.185 },
+    ],
+];
+
+/* =============================================================
+   RENDER — continuous 5-per-row grid, no year dividers
+============================================================= */
+function render() {
+    const canvas = document.getElementById('archiveCanvas');
+    canvas.innerHTML = '';
+
+    const ROW_SIZE = 5;
+    const rows = [];
+    for (let i = 0; i < ARCHIVE.length; i += ROW_SIZE) {
+        rows.push(ARCHIVE.slice(i, i + ROW_SIZE));
+    }
+
+    rows.forEach((rowItems, rIdx) => {
+        const count = rowItems.length;
+        let tpl;
+        if      (count >= 5) tpl = ROW_TEMPLATES[rIdx % 3];
+        else if (count === 4) tpl = ROW_TEMPLATES[3];
+        else if (count === 3) tpl = ROW_TEMPLATES[4];
+        else if (count === 2) tpl = ROW_TEMPLATES[5];
+        else                  tpl = ROW_TEMPLATES[6];
+
+        canvas.appendChild(buildRow(rowItems, tpl));
+    });
+}
+
+function buildRow(items, tpl) {
+    const row = document.createElement('div');
+    row.className = 'polaroid-row';
+
+    const canvasW = document.getElementById('archiveCanvas').offsetWidth || 900;
+
+    items.forEach((item, j) => {
+        const slot = tpl[j] || tpl[tpl.length - 1];
+        const w = Math.max(90, Math.min(210, Math.round(canvasW * slot.wFrac)));
+        const card = buildPolaroid(item, slot, w);
+        row.appendChild(card);
+    });
+
+    return row;
+}
+
+function buildPolaroid(item, slot, w) {
+    const card = document.createElement('div');
+    card.className = 'polaroid';
+    card.style.width = w + 'px';
+    card.style.marginTop = slot.mt + 'px';
+    card.style.marginLeft = slot.ml;
+    card.style.transform = `rotate(${slot.rot}deg)`;
+
+    const img = document.createElement('img');
+    img.className = 'polaroid-photo square'; // always square in grid
+    img.src = item.image;
+    img.alt = item.alt || '';
+    img.loading = 'lazy';
+
+    const caption = document.createElement('div');
+    caption.className = 'polaroid-caption';
+    caption.innerHTML = `
+        <div class="polaroid-date">${item.date}</div>
+        ${item.location ? `<div class="polaroid-loc">${item.location}</div>` : ''}
+    `;
+
+    card.appendChild(img);
+    card.appendChild(caption);
+
+    // hover lift preserving rotation
+    card.addEventListener('mouseenter', () => {
+        card.style.transform = `rotate(${slot.rot}deg) translateY(-7px)`;
+        card.style.zIndex = '10';
+        card.style.boxShadow = '0 2px 6px rgba(58,53,48,0.08), 0 12px 40px rgba(58,53,48,0.14), 0 24px 60px rgba(58,53,48,0.08)';
+    });
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = `rotate(${slot.rot}deg)`;
+        card.style.zIndex = '';
+        card.style.boxShadow = '';
+    });
+
+    card.addEventListener('click', () => openModal(item));
+
+    return card;
+}
+
+/* =============================================================
+   MODAL
+============================================================= */
+let activeIndex = 0;
+let cardFlipped = false;
+
+function openModal(item) {
+    activeIndex = ARCHIVE.findIndex(a => a.id === item.id);
+    cardFlipped = false;
+    document.getElementById('flipCard').classList.remove('flipped');
+    populateModal(item);
+    document.getElementById('modalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function populateModal(item) {
+    const photo = document.getElementById('mPhoto');
+    photo.src = item.image;
+    photo.alt = item.alt || '';
+    photo.className = `card-img ${item.aspect}`;
+
+    document.getElementById('mTitle').textContent    = item.title || '';
+    document.getElementById('mDate').textContent     = item.date;
+    document.getElementById('mLoc').textContent      = item.location || '';
+    document.getElementById('bWhat').textContent     = item.description;
+    document.getElementById('bMeaning').textContent  = item.meaning;
+    document.getElementById('bReflection').textContent = item.reflection;
+    document.getElementById('mCounter').textContent  = `${activeIndex + 1} / ${ARCHIVE.length}`;
+    document.getElementById('prevBtn').disabled      = activeIndex === 0;
+    document.getElementById('nextBtn').disabled      = activeIndex === ARCHIVE.length - 1;
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    cardFlipped = false;
+    document.getElementById('flipCard').classList.remove('flipped');
+}
+
+function flipCard() {
+    cardFlipped = !cardFlipped;
+    document.getElementById('flipCard').classList.toggle('flipped', cardFlipped);
+}
+
+function navigate(dir) {
+    const next = activeIndex + dir;
+    if (next < 0 || next >= ARCHIVE.length) return;
+    activeIndex = next;
+    cardFlipped = false;
+
+    const card = document.getElementById('flipCard');
+    card.classList.remove('flipped');
+    card.style.opacity = '0';
+    card.style.transition = 'opacity 0.15s ease';
+
+    setTimeout(() => {
+        populateModal(ARCHIVE[activeIndex]);
+        card.style.opacity = '1';
+        // restore flip transition after fade
+        setTimeout(() => {
+            card.style.transition = 'transform 0.55s cubic-bezier(0.4,0,0.2,1)';
+        }, 160);
+    }, 140);
+}
+
+function onOverlayClick(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+/* =============================================================
+   KEYBOARD + SWIPE
+============================================================= */
+document.addEventListener('keydown', e => {
+    if (!document.getElementById('modalOverlay').classList.contains('active')) return;
+    if (e.key === 'Escape')      closeModal();
+    if (e.key === 'ArrowRight')  navigate(1);
+    if (e.key === 'ArrowLeft')   navigate(-1);
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+});
+
+let swipeX = 0;
+const overlay = document.getElementById('modalOverlay');
+overlay.addEventListener('touchstart', e => { swipeX = e.touches[0].clientX; }, { passive: true });
+overlay.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - swipeX;
+    if (Math.abs(dx) > 52) navigate(dx < 0 ? 1 : -1);
+}, { passive: true });
+
+/* =============================================================
+   NAV
+============================================================= */
+function toggleMenu() {
+    document.getElementById('menu').classList.toggle('active');
+    document.getElementById('hamburger').classList.toggle('active');
+}
+function closeMenu() {
+    document.getElementById('menu').classList.remove('active');
+    document.getElementById('hamburger').classList.remove('active');
+}
+
+/* =============================================================
+   INIT
+============================================================= */
+render();
+window.addEventListener('resize', render);
+</script>
+</body>
+</html>

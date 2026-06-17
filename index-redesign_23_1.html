@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tyler Ho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: #fefdfb;
+            color: #3a3530;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .logo {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0;
+            color: #3a3530;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .hamburger {
+            width: 30px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            pointer-events: auto;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 1px;
+            background-color: #3a3530;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: #fefdfb;
+            padding: 100px 40px 40px 40px;
+            z-index: 99;
+            transition: right 0.3s ease;
+            border-left: 1px solid #ede8e2;
+        }
+
+        nav.active {
+            right: 0;
+        }
+
+        nav a {
+            display: block;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            color: #3a3530;
+            text-decoration: none;
+            margin-bottom: 8px;
+            font-weight: 400;
+            transition: opacity 0.2s;
+        }
+
+        nav a:hover {
+            opacity: 0.6;
+        }
+
+        .menu-caption {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #b8b0a8;
+            font-weight: 400;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        main {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 60px;
+            position: relative;
+        }
+
+        .center-text {
+            max-width: 600px;
+            text-align: center;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.7;
+            color: #3a3530;
+            transition: opacity 0.4s ease;
+        }
+
+        .slider-container {
+            position: fixed;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 60px;
+            background: transparent;
+            z-index: 51;
+        }
+
+        .slider-center {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 0;
+        }
+
+        .slider-track {
+            width: 100%;
+            height: 1px;
+            background-color: #d9d3cc;
+            position: relative;
+            cursor: pointer;
+            margin-bottom: 6px;
+        }
+
+        .slider-progress {
+            display: none;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background-color: #3a3530;
+            border-radius: 50%;
+            cursor: grab;
+            z-index: 10;
+        }
+
+        .slider-handle:active {
+            cursor: grabbing;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 8px;
+            margin-top: 4px;
+        }
+
+        .slider-label {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #7a7070;
+            font-weight: 400;
+            text-transform: lowercase;
+        }
+
+        .slider-number {
+            display: none;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 60px;
+            background-color: #fefdfb;
+            border-top: 1px solid #ede8e2;
+            z-index: 50;
+        }
+
+        .footer-left {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            color: #7a7070;
+            font-weight: 400;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-right a {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            color: #7a7070;
+            text-decoration: none;
+            font-weight: 400;
+            transition: opacity 0.2s;
+        }
+
+        .footer-right a:hover {
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 30px 40px;
+            }
+
+            main {
+                padding: 0 40px;
+            }
+
+            .center-text {
+                max-width: 100%;
+                font-size: 14px;
+            }
+
+            .slider-container {
+                padding: 0 40px;
+                height: 70px;
+            }
+
+            .slider-left,
+            .slider-right {
+                font-size: 11px;
+            }
+
+            .slider-number {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">tyler ho</div>
+        <button class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <nav id="menu">
+        <a href="selected-work.html" onclick="closeMenu();">selected work</a>
+        <div class="menu-caption">systems, research, tools</div>
+        <a href="field-notes.html" onclick="closeMenu();">field notes</a>
+        <div class="menu-caption">essays, fragments, observations</div>
+        <a href="archive.html" onclick="closeMenu();">archive</a>
+        <div class="menu-caption">images, places, references</div>
+    </nav>
+
+    <main>
+        <p class="center-text" id="centerText">hey, it's tyler – nice to see you. this website is always changing as i change. i'm probably more like you than different. one thing about me is that i'm an extreme extrovert, and oddly, i don't have social anxiety. i like deep conversations, building on ideas, and finding new ways to live through people. i'm interested in spaces where technology, taste, and ambition meet (let's do it over food!). just like you, i'm learning how to build a life of meaningful work, but also do it with happiness. i'm still figuring things out, but i know i like building, learning through people, and finding new ways to live.</p>
+    </main>
+
+    <div class="slider-container">
+        <div class="slider-center">
+            <div class="slider-track" id="sliderTrack">
+                <div class="slider-progress" id="sliderProgress"></div>
+                <div class="slider-handle" id="sliderHandle"></div>
+            </div>
+            <div class="slider-labels">
+                <div class="slider-label">where it started</div>
+                <div class="slider-label" style="text-align: right;">where it's going</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-left"></div>
+        <div class="footer-right">
+            <a href="https://www.instagram.com/tylerho.mp4">instagram</a>
+            <a href="https://twitter.com">twitter</a>
+            <a href="https://www.linkedin.com/in/tylerho1">linkedin</a>
+        </div>
+    </footer>
+
+    <script>
+        let currentChapter = 0;
+        const totalChapters = 7;
+
+        const chapters = [
+            {
+                title: '00',
+                text: 'hey, it\'s tyler – nice to see you. this website is always changing as i change. i\'m probably more like you than different. one thing about me is that i\'m an extreme extrovert, and oddly, i don\'t have social anxiety. i like deep conversations, building on ideas, and finding new ways to live through people. i\'m interested in spaces where technology, taste, and ambition meet (let\'s do it over food!). just like you, i\'m learning how to build a life of meaningful work, but also do it with happiness. i\'m still figuring things out, but i know i like building, learning through people, and finding new ways to live.'
+            },
+            {
+                title: '01',
+                text: 'i grew up in southern california. i used to share a house with three families. i was always curious about anything, and one day in third grade, my dad gave me a book: rich dad poor dad. since then, i have read maybe 100+ personal books, but that one gave me my first hand at finance and how to work with people. my first inch toward real productivity started there.'
+            },
+            {
+                title: '02',
+                text: 'in middle school, i had a failed vending machine business. it was fun while it lasted. later, in early high school, sneakers became my first real lesson in business. i got scammed. i bought bad shoes. i lost money. but all failures lead to success one day, and i didn\'t let that stop me. taste, timing, demand, trust, and resale all became tangible. eventually, i started flipping shoes and made a "fortune" in kids\' terms. on a high level, i learned two things: everything is some version of buy low, sell higher, and you can bargain / sell your way into almost anything.'
+            },
+            {
+                title: '03',
+                text: 'on a more personal side, i joined a couple of really cool volunteering organizations. i remember when i was younger, i would go with my church to homeless shelters. those experiences pained me at a young age. i was told that i made their day. why? all i did was smile. just smile. i think that experience taught me that people just want to be seen; make someone\'s day better. i wanted to carry that side with me. the first organization i joined – operation be kind – was to serve those in my area, passing around goodie bags that i created with deodorant, toothbrushes, toothpaste, and other essentials. this was one of my first times building an understanding of empathy. the second was the arthritis organization. after my mother got arthritis, i made it personal to spread awareness about the issue. every year, i plan a 5k run at angels stadium with colleagues to raise over 500k for people suffering from arthritis.'
+            },
+            {
+                title: '04',
+                text: 'after graduating high school, i\'m not sure how i felt. i still didn\'t know myself (i still don\'t), but i was determined to try to find myself. i started reading a lot of self-help books. (i need to get on reading all the religious texts.) this time frame of my life is contextualized by elon musk talking about the hitchhiker\'s guide to the galaxy and trying to ask the right questions to figure out an endpoint – the meaning of who we are. something relevant to purpose: i have noticed that parents often have children to give themselves purpose and to relive the joys they once had through their children. hopefully, we find something that feels like a child to us. i digress, but my readings challenged me to question everything. funny enough, i ended up working at a startup. those days were 996 at 17 years old. i realized that working startup hours taught me the difference between liking entrepreneurship and actually executing. it also taught me that life is a game of leverage.'
+            },
+            {
+                title: '05',
+                text: 'i came to uc irvine. had a ton of fun. joined a business fraternity. but i did find what i really enjoyed – it was finance (i blame my sneaker business). i set my north star for investment banking; i didn\'t know if i was going to get there. but this process shaped the way i interact, how i view conversations, what i consider productive, how i curate the right environment around me, how i structure my thoughts, and how i reach a bit farther and stretch a little. i used to worry about things, but after recruiting, it taught me to focus on what was in my control. i used to stress, but stress meant that i had things to do (it was a biological function of who we are). i used to not open up emotionally, but that process forced me to. many nights of screen staring, pressing the send email button, and reading more books got me there. i eventually got there. that reaffirmed one of the core mottos in my life: "manifest it." you are only one yes away. multiply your luck. the goalpost has since moved.'
+            },
+            {
+                title: '06',
+                text: 'this paragraph marks a closing remark. i am taking a gap year for 2026–2027 to find something meaningful to work toward. i am doing a bit of venture work, exploring eta, working a summer in new york, meeting founders, and eating tons of pizza. long term, i hope to be a better person than i was yesterday.'
+            }
+        ];
+
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            const hamburger = document.querySelector('.hamburger');
+            menu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            const menu = document.getElementById('menu');
+            const hamburger = document.querySelector('.hamburger');
+            menu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+
+        function updateChapter() {
+            const chapter = chapters[currentChapter];
+
+            document.getElementById('centerText').textContent = chapter.text;
+
+            const percent = (currentChapter / (totalChapters - 1)) * 100;
+            document.getElementById('sliderHandle').style.left = percent + '%';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('sliderTrack');
+            const handle = document.getElementById('sliderHandle');
+            let isDragging = false;
+            let dragPercent = 0;
+            
+            function handleDrag(e) {
+                if (!isDragging) return;
+                const rect = track.getBoundingClientRect();
+                dragPercent = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
+                
+                document.getElementById('sliderHandle').style.left = dragPercent + '%';
+                
+                currentChapter = Math.round(dragPercent / 100 * (totalChapters - 1));
+                
+                const chapter = chapters[currentChapter];
+                document.getElementById('centerText').textContent = chapter.text;
+            }
+            
+            handle.addEventListener('mousedown', () => {
+                isDragging = true;
+            });
+            
+            document.addEventListener('mousemove', handleDrag);
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            track.addEventListener('click', (e) => {
+                const rect = track.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                currentChapter = Math.round(percent * (totalChapters - 1));
+                updateChapter();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    currentChapter = (currentChapter + 1) % totalChapters;
+                    updateChapter();
+                } else if (e.key === 'ArrowLeft') {
+                    currentChapter = (currentChapter - 1 + totalChapters) % totalChapters;
+                    updateChapter();
+                }
+            });
+
+            updateChapter();
+        });
+    </script>
+</body>
+</html>
