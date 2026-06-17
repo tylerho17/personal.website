@@ -836,8 +836,21 @@ function closeMenu() {
 /* =============================================================
    INIT
 ============================================================= */
-render();
-window.addEventListener('resize', render);
+let _rendering = false;
+function safeRender() {
+    if (_rendering) return;
+    _rendering = true;
+    render();
+    _rendering = false;
+}
+
+safeRender();
+
+let _resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(safeRender, 120);
+});
 </script>
 </body>
 </html>
