@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archive — Tyler Ho</title>
+    <title>archive — tyler ho</title>
+    <meta name="description" content="a chronological archive of photographs — family, work, investing, art, friendship, and the climb. images and fragments that shaped how i see.">
+    <meta property="og:title" content="archive — tyler ho">
+    <meta property="og:description" content="a chronological archive of photographs — family, work, investing, art, friendship, and the climb.">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         /* ─── reset ─── */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -56,33 +61,70 @@
         .hamburger.active span:nth-child(2) { opacity: 0; }
         .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
-        /* ─── nav drawer ─── */
+        /* ─── the index — an archive drawer, not a menu ─── */
         nav {
             position: fixed;
-            top: 0; right: -300px;
-            width: 300px; height: 100vh;
+            top: 0; right: -320px;
+            width: 320px; height: 100vh;
             background-color: #fefdfb;
-            padding: 100px 40px 40px;
+            padding: 100px 44px 44px;
             z-index: 199;
-            transition: right 0.3s ease;
+            transition: right 0.45s ease;
             border-left: 1px solid #ede8e2;
+            overflow-y: auto;
         }
         nav.active { right: 0; }
-        nav a {
-            display: block; font-size: 14px;
-            color: #3a3530; text-decoration: none;
-            margin-bottom: 8px; font-weight: 400;
-            transition: opacity 0.2s;
+        .menu-title {
+            font-size: 10px;
+            color: #b8b0a8;
+            letter-spacing: 0.14em;
+            margin-bottom: 26px;
         }
-        nav a:hover { opacity: 0.6; }
-        .menu-caption {
-            font-size: 11px; color: #b8b0a8;
-            margin-bottom: 24px; line-height: 1.4;
+        .index-row {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            padding: 9px 0;
+            text-decoration: none;
+        }
+        .index-num {
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            color: #8d99ab;
+            width: 18px;
+            flex-shrink: 0;
+        }
+        .index-name {
+            display: block;
+            font-size: 14px;
+            color: #3a3530;
+            transition: color 0.2s;
+        }
+        .index-sub {
+            display: block;
+            font-size: 10px;
+            color: #b8b0a8;
+            margin-top: 1px;
+        }
+        .index-row:hover .index-name { color: #46586e; }
+        .menu-materials-label {
+            margin-top: 44px;
+            padding-top: 18px;
+            border-top: 1px solid #ede8e2;
+            font-size: 10px;
+            color: #b8b0a8;
+            letter-spacing: 0.12em;
+        }
+        .menu-materials {
+            font-size: 11px;
+            color: #b8b0a8;
+            margin-top: 8px;
+            line-height: 1.7;
         }
 
         /* ─── page intro ─── */
         .page-header {
-            padding: 104px 40px 16px;
+            padding: 104px 40px 20px;
         }
         .page-eyebrow {
             font-size: 11px;
@@ -96,40 +138,66 @@
             line-height: 1.6;
             max-width: 400px;
         }
+        .page-meta {
+            font-size: 10px;
+            color: #b8b0a8;
+            letter-spacing: 0.08em;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #ede8e2;
+            max-width: 400px;
+        }
 
-        /* ─── archive canvas ─── */
+        /* ─── archive wall — film stills, uniform, chronological ─── */
         .archive-canvas {
-            padding: 0 32px 80px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 26px 20px;
+            padding: 8px 40px 60px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+        @media (max-width: 1024px) {
+            .archive-canvas { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 640px) {
+            .archive-canvas { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; padding: 8px 20px 60px; }
         }
 
-        /* ─── polaroid row ─── */
-        .polaroid-row {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 8px;
-        }
-
-        /* ─── polaroid card ─── */
+        /* ─── contact-sheet cell — a framed still, not a card ─── */
         .polaroid {
-            background: #faf8f4;
-            padding: 8px 8px 26px;
-            box-shadow:
-                0 1px 3px rgba(58,53,48,0.07),
-                0 4px 16px rgba(58,53,48,0.09),
-                0 12px 40px rgba(58,53,48,0.06);
             cursor: pointer;
             position: relative;
-            flex-shrink: 0;
-            transition: box-shadow 0.28s ease;
+            opacity: 0;
+            transition: opacity 0.7s ease;
+        }
+        .polaroid.in-view { opacity: 1; }
+        .polaroid:focus-visible {
+            outline: 1px solid #46586e;
+            outline-offset: 3px;
         }
         /* The hover lift is set in JS to preserve individual rotation */
+
+        .polaroid-photo-wrap {
+            position: relative;
+            overflow: hidden;
+            /* thin contact-sheet frame around the still */
+            border: 1px solid #d6cfc6;
+            padding: 3px;
+            background: #fdfcf9;
+            transition: border-color 0.35s ease;
+        }
+        @media (hover: hover) {
+            .polaroid:hover .polaroid-photo-wrap { border-color: #a89f94; }
+        }
         .polaroid-photo {
             display: block;
             width: 100%;
+            height: auto; /* let aspect-ratio win over the width/height attributes */
             object-fit: cover;
             background: #e4dfd8;
+            aspect-ratio: 1 / 1;
         }
-        .polaroid-photo.square   { aspect-ratio: 1 / 1; }
         .polaroid-fallback {
             aspect-ratio: 1 / 1;
             width: 100%;
@@ -142,30 +210,59 @@
             text-align: center;
             padding: 8px;
         }
-        .polaroid-photo.portrait { aspect-ratio: 3 / 4; }
-        .polaroid-photo.landscape { aspect-ratio: 4 / 3; }
+
+        /* hover reveal — short caption over the photo (pointer devices only) */
+        .polaroid-hover-cap {
+            position: absolute;
+            left: 3px; right: 3px; bottom: 3px;
+            padding: 14px 8px 7px;
+            background: linear-gradient(to bottom, rgba(250,248,244,0), rgba(250,248,244,0.95) 45%);
+            font-size: 9px;
+            line-height: 1.45;
+            color: #5c554e;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+        }
+        @media (hover: hover) {
+            .polaroid:hover .polaroid-hover-cap { opacity: 1; }
+        }
 
         .polaroid-caption {
-            padding-top: 7px;
+            padding-top: 8px;
+            position: relative;
+        }
+        .polaroid-title {
+            font-size: 9.5px;
+            color: #3a3530;
+            line-height: 1.4;
+            padding-right: 22px;
         }
         .polaroid-date {
-            font-size: 9.5px;
+            font-size: 9px;
             color: #7a7070;
-            font-weight: 400;
+            margin-top: 2px;
         }
         .polaroid-loc {
-            font-size: 9.5px;
+            font-size: 9px;
             color: #b8b0a8;
             margin-top: 1px;
         }
+        .polaroid-num {
+            position: absolute;
+            top: 8px; right: 0;
+            font-size: 8.5px;
+            letter-spacing: 0.08em;
+            color: #8d99ab;
+        }
 
-        /* ─── modal overlay ─── */
+        /* ─── modal overlay — soft, light, like a viewing room ─── */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(26, 23, 20, 0.78);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(252, 251, 248, 0.93);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -181,7 +278,7 @@
 
         /* ─── flip card ─── */
         .flip-wrapper {
-            width: min(460px, 88vw);
+            width: min(480px, 90vw);
             perspective: 1400px;
             position: relative;
         }
@@ -197,14 +294,14 @@
         .card-face {
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            background: #faf8f4;
+            background: #fdfcf9;
+            border: 1px solid #ede8e2;
         }
         .card-front {
-            padding: 16px 16px 44px;
+            padding: 16px 16px 36px;
             box-shadow:
-                0 2px 8px rgba(26,23,20,0.12),
-                0 16px 60px rgba(26,23,20,0.28),
-                0 40px 100px rgba(26,23,20,0.18);
+                0 2px 10px rgba(58,53,48,0.08),
+                0 24px 70px rgba(58,53,48,0.14);
         }
         .card-back {
             position: absolute;
@@ -212,11 +309,10 @@
             width: 100%; height: 100%;
             transform: rotateY(180deg);
             overflow-y: auto;
-            padding: 36px 36px 44px;
+            padding: 32px 34px 40px;
             box-shadow:
-                0 2px 8px rgba(26,23,20,0.12),
-                0 16px 60px rgba(26,23,20,0.28),
-                0 40px 100px rgba(26,23,20,0.18);
+                0 2px 10px rgba(58,53,48,0.08),
+                0 24px 70px rgba(58,53,48,0.14);
         }
 
         .card-img {
@@ -224,16 +320,25 @@
             width: 100%;
             object-fit: cover;
             background: #e4dfd8;
+            aspect-ratio: 1 / 1;
         }
-        .card-img.square   { aspect-ratio: 1 / 1; }
-        .card-img.portrait { aspect-ratio: 3 / 4; }
-        .card-img.landscape { aspect-ratio: 4 / 3; }
 
-        .card-front-meta { padding-top: 14px; }
+        .card-front-meta {
+            padding-top: 14px;
+            position: relative;
+        }
+        .card-num {
+            position: absolute;
+            top: 15px; right: 0;
+            font-size: 9.5px;
+            letter-spacing: 0.1em;
+            color: #8d99ab;
+        }
         .card-title {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #3a3530;
             margin-bottom: 3px;
+            padding-right: 44px;
         }
         .card-date {
             font-size: 11px;
@@ -244,33 +349,45 @@
             color: #b8b0a8;
             margin-top: 1px;
         }
+        .card-short {
+            font-size: 11.5px;
+            color: #7a7070;
+            line-height: 1.6;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ede8e2;
+        }
         .flip-hint {
             font-size: 10px;
             color: #c4bdb5;
             letter-spacing: 0.07em;
-            margin-top: 14px;
+            margin-top: 12px;
         }
 
         /* back face */
         .back-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
             font-size: 10px;
             color: #c4bdb5;
             letter-spacing: 0.12em;
-            margin-bottom: 28px;
+            margin-bottom: 26px;
             border-bottom: 1px solid #ede8e2;
-            padding-bottom: 14px;
+            padding-bottom: 13px;
         }
+        .back-chapter { color: #8d99ab; }
         .back-field { margin-bottom: 22px; }
         .back-key {
             font-size: 10px;
             color: #b8b0a8;
             letter-spacing: 0.1em;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         .back-value {
             font-size: 13px;
             color: #3a3530;
-            line-height: 1.7;
+            line-height: 1.75;
         }
         .back-hint {
             font-size: 10px;
@@ -284,14 +401,14 @@
             position: fixed;
             top: 34px; right: 48px;
             background: none; border: none;
-            color: rgba(250,248,244,0.65);
+            color: #b8b0a8;
             font-size: 22px; line-height: 1;
             cursor: pointer; padding: 6px;
             z-index: 1002;
             transition: color 0.2s;
             font-family: inherit;
         }
-        .modal-close:hover { color: rgba(250,248,244,1); }
+        .modal-close:hover { color: #3a3530; }
 
         .modal-nav-row {
             position: absolute;
@@ -303,26 +420,34 @@
         }
         .nav-btn {
             background: none; border: none;
-            color: rgba(250,248,244,0.6);
+            color: #b8b0a8;
             font-size: 17px;
             cursor: pointer; padding: 8px 4px;
             font-family: inherit;
             transition: color 0.2s;
         }
-        .nav-btn:hover { color: rgba(250,248,244,1); }
-        .nav-btn:disabled { color: rgba(250,248,244,0.2); cursor: default; }
+        .nav-btn:hover { color: #3a3530; }
+        .nav-btn:disabled { color: #e4dfd8; cursor: default; }
         .modal-counter {
             font-size: 10px;
-            color: rgba(250,248,244,0.45);
+            color: #8d99ab;
             letter-spacing: 0.12em;
         }
 
         /* ─── responsive ─── */
         @media (max-width: 768px) {
             header { padding: 28px 24px; }
-            .page-header { padding: 110px 24px 36px; }
-            .archive-canvas { padding: 0 16px 120px; }
+            .page-header { padding: 100px 24px 20px; }
             .modal-close { top: 18px; right: 20px; }
+        }
+
+        /* ─── reduced motion ─── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+            .polaroid { opacity: 1; }
         }
     </style>
 </head>
@@ -330,63 +455,80 @@
 
 <!-- ── header ── -->
 <header>
-    <a class="logo" href="index-redesign_23_1.html">tyler ho</a>
-    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <a class="logo" href="index.html">tyler ho</a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="menu">
         <span></span><span></span><span></span>
     </button>
 </header>
 
-<!-- ── nav ── -->
-<nav id="menu">
-    <a href="selected-work.html" onclick="closeMenu()">selected work</a>
-    <div class="menu-caption">systems, research, tools</div>
-    <a href="field-notes.html" onclick="closeMenu()">field notes</a>
-    <div class="menu-caption">essays, fragments, observations</div>
-    <a href="archive.html" onclick="closeMenu()">archive</a>
-    <div class="menu-caption">images, places, references</div>
+<!-- ── the index ── -->
+<nav id="menu" aria-label="index">
+    <div class="menu-title">index</div>
+
+    <a class="index-row" href="index.html" onclick="closeMenu()">
+        <span class="index-num">01</span>
+        <span><span class="index-name">letter</span><span class="index-sub">home</span></span>
+    </a>
+    <a class="index-row" href="archive.html" onclick="closeMenu()">
+        <span class="index-num">02</span>
+        <span><span class="index-name">photographs</span><span class="index-sub">archive</span></span>
+    </a>
+    <a class="index-row" href="field-notes.html" onclick="closeMenu()">
+        <span class="index-num">03</span>
+        <span><span class="index-name">notes</span><span class="index-sub">field notes</span></span>
+    </a>
+    <a class="index-row" href="selected-work.html" onclick="closeMenu()">
+        <span class="index-num">04</span>
+        <span><span class="index-name">work</span><span class="index-sub">selected work</span></span>
+    </a>
+
+    <div class="menu-materials-label">materials</div>
+    <div class="menu-materials">photographs · notes · people · places · work</div>
 </nav>
 
 <!-- ── page intro ── -->
 <div class="page-header">
-    <div class="page-eyebrow">archive</div>
-    <div class="page-desc">images, places, and fragments that shaped how i see.</div>
+    <div class="page-eyebrow">archive — contact sheet 001</div>
+    <div class="page-desc">photographs, places, and fragments that shaped how i see.</div>
+    <div class="page-meta" id="pageMeta"></div>
 </div>
 
-<!-- ── archive grid (rendered by JS) ── -->
+<!-- ── contact sheet (rendered by JS) ── -->
 <main class="archive-canvas" id="archiveCanvas"></main>
 
 <!-- ── modal ── -->
-<div class="modal-overlay" id="modalOverlay" onclick="onOverlayClick(event)">
-    <button class="modal-close" onclick="closeModal()">&#215;</button>
+<div class="modal-overlay" id="modalOverlay" onclick="onOverlayClick(event)" role="dialog" aria-modal="true" aria-label="photo detail">
+    <button class="modal-close" onclick="closeModal()" aria-label="close">&#215;</button>
 
     <div class="flip-wrapper">
         <div class="flip-card" id="flipCard" onclick="flipCard()">
 
             <!-- front -->
             <div class="card-face card-front">
-                <img class="card-img" id="mPhoto" src="" alt="" loading="lazy">
+                <img class="card-img" id="mPhoto" src="" alt="" decoding="async">
                 <div class="card-front-meta">
+                    <div class="card-num" id="mNum"></div>
                     <div class="card-title" id="mTitle"></div>
                     <div class="card-date" id="mDate"></div>
                     <div class="card-loc" id="mLoc"></div>
-                    <div class="flip-hint">tap to read &rarr;</div>
+                    <div class="card-short" id="mShort"></div>
+                    <div class="flip-hint">tap to read the story &rarr;</div>
                 </div>
             </div>
 
             <!-- back -->
             <div class="card-face card-back">
-                <div class="back-header">notes</div>
+                <div class="back-header">
+                    <span id="bNum"></span>
+                    <span class="back-chapter" id="bChapter"></span>
+                </div>
                 <div class="back-field">
-                    <div class="back-key">what</div>
-                    <div class="back-value" id="bWhat"></div>
+                    <div class="back-key">the story</div>
+                    <div class="back-value" id="bStory"></div>
                 </div>
                 <div class="back-field">
                     <div class="back-key">meaning</div>
                     <div class="back-value" id="bMeaning"></div>
-                </div>
-                <div class="back-field">
-                    <div class="back-key">reflection</div>
-                    <div class="back-value" id="bReflection"></div>
                 </div>
                 <div class="back-hint">&larr; tap to flip back</div>
             </div>
@@ -395,391 +537,375 @@
 
         <!-- nav controls -->
         <div class="modal-nav-row">
-            <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">&#8592;</button>
+            <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" aria-label="previous photo">&#8592;</button>
             <span class="modal-counter" id="mCounter"></span>
-            <button class="nav-btn" id="nextBtn" onclick="navigate(1)">&#8594;</button>
+            <button class="nav-btn" id="nextBtn" onclick="navigate(1)" aria-label="next photo">&#8594;</button>
         </div>
     </div>
 </div>
 
 <script>
 /* =============================================================
-   DATA
-   Add new entries here. Oldest first.
+   ARCHIVE DATA
+   ── edit this list to change photo order, dates, locations,
+      captions, and stories ──
+   · array order controls visual order (top-left → bottom-right,
+     oldest first)
+   · `file` must exactly match a filename inside Photos/
+     (case-sensitive — the deployed server is case-sensitive)
+   · a matching thumbnail is expected at Photos/thumbs/<file>;
+     if it is missing the original loads instead, automatically
+   · to add a photo: copy any block, edit the fields, place it
+     in chronological position
+   · sortDate (yyyy-mm) is kept for reference so reordering by
+     hand stays easy
 ============================================================= */
-// ─── edit this list to change photo order, dates, locations, and reflections ───
-// array order controls visual order (top-left → bottom-right, oldest first)
-// to add a photo: copy any block, change the fields, add it in the right position
-// to reorder: cut and paste blocks into the order you want
 const archiveItems = [
     {
-        image: 'Photos/first-sneaker-business.jpeg',
-        date: '',
-        location: '',
-        title: 'first sneaker business',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'first sneaker business',
+        file: 'first-sneaker-business.jpeg',
+        title: 'first business',
+        date: 'january 2022',
+        sortDate: '2022-01',
+        location: 'southern california',
+        chapter: 'entrepreneurship / taste',
+        shortCaption: 'the first time i learned that taste could become money.',
+        expandedCaption: 'this was my first real business. through sneakers, i learned how to source, sell, negotiate, take better photos, talk to people, and understand what made something desirable. it was fun, imperfect, and probably the first time i felt the mechanics of ownership.',
+        meaning: 'first business, sales, taste, ownership.',
+        tone: 'playful, reflective.',
+        alt: 'sneakers from tyler’s first business.',
     },
     {
-        image: 'Photos/math-competition.jpeg',
-        date: '',
-        location: '',
-        title: 'math competition',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'math competition',
+        file: 'IMG_2191.jpeg',
+        title: 'after graduation',
+        date: 'march 2024',
+        sortDate: '2024-03',
+        location: '', // location tbd — fill in when remembered
+        chapter: 'transition / becoming',
+        shortCaption: 'after one chapter ended, another one started to feel possible.',
+        expandedCaption: 'this was with a friend around graduation. i remember feeling excited, uncertain, and ready for a new life. looking back, it feels like a threshold photo. nothing was fully clear yet, but something was opening.',
+        meaning: 'transition, friendship, optimism.',
+        tone: 'hopeful, nostalgic.',
+        alt: 'tyler with a friend around graduation.',
     },
     {
-        image: 'Photos/family.jpg',
-        date: '',
-        location: '',
-        title: 'family',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'family',
-    },
-    {
-        image: 'Photos/first-ever-nice-tie.jpeg',
-        date: '',
-        location: '',
-        title: 'first ever nice tie',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'first ever nice tie',
-    },
-    {
-        image: 'Photos/startup-days.jpeg',
-        date: '',
-        location: '',
+        file: 'startup-days.jpeg',
         title: 'startup days',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'startup days',
+        date: 'june 2024',
+        sortDate: '2024-06',
+        location: 'wework',
+        chapter: 'startups / turning point',
+        shortCaption: 'seventeen, in a wework, realizing i needed to lock in.',
+        expandedCaption: 'this was from my startup days working with a founder friend in the construction space. i was 17, helping with go-to-market, and getting exposed to the pace and intensity of building. this was a turning point because it hit me that the world was bigger than school, and that i needed to take my life seriously.',
+        meaning: 'startups, intensity, ambition, turning point.',
+        tone: 'ambitious, formative.',
+        alt: 'tyler during early startup work at a wework.',
     },
     {
-        image: 'Photos/business-fraternity.JPG',
-        date: '',
-        location: '',
-        title: 'business fraternity',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'business fraternity',
+        file: 'family.jpg',
+        title: 'family, 18',
+        date: 'august 2024',
+        sortDate: '2024-08',
+        location: 'garden grove / southern california',
+        chapter: 'origin / family',
+        shortCaption: 'turning eighteen with the people who shaped everything before it.',
+        expandedCaption: 'this was my 18th birthday with my brother, my parents, and my grandma. it marked the first time i really felt myself becoming an adult. around this period, life started to feel more serious. i knew i had to work harder, carry more responsibility, and begin building a future that could support the people around me.',
+        meaning: 'becoming an adult, family responsibility, origin.',
+        tone: 'warm, personal, reflective.',
+        alt: 'tyler with his family on his 18th birthday.',
     },
     {
-        image: 'Photos/first-hackathon.jpeg',
-        date: '',
-        location: '',
-        title: 'first hackathon',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'first hackathon',
+        file: 'crosspoint-financial.jpeg',
+        title: 'first paid finance job',
+        date: 'september 2024',
+        sortDate: '2024-09',
+        location: 'crosspoint financial',
+        chapter: 'work / finance',
+        shortCaption: 'commuting between school and work, trying not to miss a beat.',
+        expandedCaption: 'this was one of my first paid jobs and one of my first real exposures to finance. i was working on financial documents, learning fp&a, and commuting between school and work during the week. monday, wednesday, friday, i would show up and keep moving. this period taught me what it meant to build momentum before anything felt guaranteed.',
+        meaning: 'early work ethic, first exposure to finance, consistency.',
+        tone: 'grounded, nostalgic.',
+        alt: 'tyler working at crosspoint financial.',
     },
     {
-        image: 'Photos/student-investment-fund.jpeg',
-        date: '',
-        location: '',
-        title: 'student investment fund',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'student investment fund',
+        file: 'business-fraternity.JPG',
+        title: 'first college circle',
+        date: 'october 2024',
+        sortDate: '2024-10',
+        location: 'uc irvine',
+        chapter: 'college / friendship',
+        shortCaption: 'the first college friends who made the place feel real.',
+        expandedCaption: 'this was with some of my first college friends through my business fraternity. these are people i have kept close and still care about deeply. the photo matters because college is not just classes, clubs, or internships. it is also the people who make the whole thing feel alive.',
+        meaning: 'friendship, belonging, college.',
+        tone: 'warm, nostalgic.',
+        alt: 'tyler with friends from his business fraternity.',
     },
     {
-        image: 'Photos/first-stock-pitch.jpeg',
-        date: '',
-        location: '',
+        file: 'first-stock-pitch.jpeg',
         title: 'first stock pitch',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'first stock pitch',
+        date: 'january 2025',
+        sortDate: '2025-01',
+        location: 'uc irvine',
+        chapter: 'investing / becoming',
+        shortCaption: 'young, nervous, badly dressed, and fully in it.',
+        expandedCaption: 'this was my first stock pitch competition. my hair was wild, the suit was not perfect, and all of us looked young, but that is what makes the photo matter. it captures the beginning of a serious interest in investing, before the polish came.',
+        meaning: 'beginnings, humility, growth.',
+        tone: 'funny, nostalgic, honest.',
+        alt: 'tyler and friends at their first stock pitch competition.',
     },
     {
-        image: 'Photos/leading-a-team.jpeg',
-        date: '',
-        location: '',
-        title: 'leading a team',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'leading a team',
+        file: 'mark-rothko.jpeg',
+        title: 'rothko',
+        date: 'january 2025',
+        sortDate: '2025-01',
+        location: 'museum',
+        chapter: 'art / expression',
+        shortCaption: 'complex feelings, expressed simply.',
+        expandedCaption: 'mark rothko’s work interests me because it shows how much emotion can live inside something visually simple. the colors, the restraint, and the progression of his work made me think about how people can carry complicated inner worlds while presenting something quiet on the surface.',
+        meaning: 'art, emotion, simplicity, reflection.',
+        tone: 'quiet, philosophical.',
+        alt: 'mark rothko artwork in a museum.',
     },
     {
-        image: 'Photos/stan-event.jpeg',
-        date: '',
-        location: '',
-        title: 'stan event',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'stan event',
+        file: 'math-competition.jpeg',
+        title: 'math and markets',
+        date: 'march 2025',
+        sortDate: '2025-03',
+        location: 'uc irvine',
+        chapter: 'learning / investing',
+        shortCaption: 'trying to understand the math behind risk, markets, and decisions.',
+        expandedCaption: 'this was a competition with friends where i was learning more technical ideas around probability, stochastic thinking, programming, and portfolio management. it represents a period where i was trying to stretch myself beyond business and into the deeper systems behind finance.',
+        meaning: 'intellectual curiosity, quantitative finance, learning.',
+        tone: 'thoughtful, academic, curious.',
+        alt: 'tyler and friends at a math and finance competition.',
     },
     {
-        image: 'Photos/crosspoint-financial.jpeg',
-        date: '',
-        location: '',
-        title: 'crosspoint financial',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'crosspoint financial',
+        file: 'reading-machiavelli.jpeg',
+        title: 'machiavelli in aldrich park',
+        date: 'march 2025',
+        sortDate: '2025-03',
+        location: 'aldrich park, uc irvine',
+        chapter: 'reading / self-discovery',
+        shortCaption: 'trying to understand people, power, and myself.',
+        expandedCaption: 'this was a period where i was reading more seriously and trying to understand emotional intelligence, power, human behavior, and how people move through the world. reading machiavelli in aldrich park felt like a small but meaningful part of finding myself.',
+        meaning: 'philosophy, people, self-education.',
+        tone: 'reflective, intellectual.',
+        alt: 'tyler reading machiavelli in aldrich park at uc irvine.',
     },
     {
-        image: 'Photos/reading-machiavelli.jpeg',
-        date: '',
-        location: '',
-        title: 'reading machiavelli',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'reading machiavelli',
-    },
-    {
-        image: 'Photos/mark-rothko.jpeg',
-        date: '',
-        location: '',
-        title: 'mark rothko',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'mark rothko',
-    },
-    {
-        image: 'Photos/ysl-art.jpeg',
-        date: '',
-        location: '',
-        title: 'ysl art',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'ysl art',
-    },
-    {
-        image: 'Photos/joe-day-yale-professor.jpeg',
-        date: '',
-        location: '',
-        title: 'joe day — yale professor',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'joe day yale professor',
-    },
-    {
-        image: 'Photos/movie-marketing-production-intern.jpeg',
-        date: '',
-        location: '',
-        title: 'movie & marketing production intern',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'movie marketing production intern',
-    },
-    {
-        image: 'Photos/cbcapital.jpeg',
-        date: '',
-        location: '',
+        file: 'cbcapital.jpeg',
         title: 'cb capital',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'cb capital',
+        date: 'september 2025',
+        sortDate: '2025-09',
+        location: 'office / internship',
+        chapter: 'finance / first real professional chapter',
+        shortCaption: 'one of the first times finance started feeling real.',
+        expandedCaption: 'this was during my in-person investment banking internship at cb capital. i was learning from my associate, working hard, and starting to understand what a career in finance could feel like from the inside. i remember this period as one of the first times i felt genuinely happy while grinding.',
+        meaning: 'professional growth, learning, nostalgia.',
+        tone: 'proud, nostalgic, understated.',
+        alt: 'tyler during his cb capital internship.',
     },
     {
-        image: 'Photos/2am-night-investmentbanking.jpeg',
-        date: '',
-        location: '',
-        title: '2am — investment banking',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: '2am night investment banking',
+        file: 'student-investment-fund.jpeg',
+        title: 'student investment fund',
+        date: 'november 2025',
+        sortDate: '2025-11',
+        location: 'uc irvine',
+        chapter: 'leadership / investing',
+        shortCaption: 'the youngest person in the room, learning how to carry responsibility.',
+        expandedCaption: 'this was during my time leading a student investment fund of around 30 people. it was stressful, public, and formative. i was presenting to a large room, helping run the day-to-day operations, and learning what it meant to lead people in a serious setting while still being one of the youngest people there.',
+        meaning: 'leadership, pressure, investing, responsibility.',
+        tone: 'serious, proud, reflective.',
+        alt: 'tyler presenting while leading the student investment fund.',
     },
     {
-        image: 'Photos/IMG_2191.jpeg',
-        date: '',
-        location: '',
-        title: 'moment',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'photo',
+        file: 'leading-a-team.jpeg',
+        title: 'leading the room',
+        date: 'january 2026',
+        sortDate: '2026-01',
+        location: 'stock pitch event',
+        chapter: 'leadership / college',
+        shortCaption: 'learning how to lead while still learning myself.',
+        expandedCaption: 'this was a group of mentees i helped lead through a stock pitch event. at the time, i was balancing investment banking preparation, leadership, and the responsibility of helping other students grow professionally. this photo matters because it reminds me that leadership is not just about being ahead. it is about pouring into people while you are still figuring things out yourself.',
+        meaning: 'leadership, mentorship, responsibility.',
+        tone: 'proud, reflective, grounded.',
+        alt: 'tyler leading a group of students at a stock pitch event.',
     },
     {
-        image: 'Photos/brian-johnson.jpeg',
-        date: '',
-        location: '',
-        title: 'brian johnson',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'brian johnson',
+        file: '2am-night-investmentbanking.jpeg',
+        title: '2 a.m. interview prep',
+        date: 'january 2026',
+        sortDate: '2026-01',
+        location: 'my room',
+        chapter: 'investing / discipline',
+        shortCaption: 'suit on top, sweatpants below, trying to break into a new world.',
+        expandedCaption: 'late at night, i would sit in my room mock interviewing for investment banking. i would stare at myself on zoom wearing a suit jacket and sweatpants, which felt ridiculous, but also honest. this photo captures the strange, private side of ambition. nobody sees the late nights, the awkward repetitions, or the moments where you are trying to become someone before anyone believes you are.',
+        meaning: 'discipline, private work, investment banking grind.',
+        tone: 'funny, reflective, ambitious.',
+        alt: 'tyler preparing late at night for investment banking interviews.',
     },
     {
-        image: 'Photos/a16z-tech-week.jpeg',
-        date: '',
-        location: '',
-        title: 'a16z tech week',
-        whatItIs: '',
-        meaning: '',
-        reflection: '',
-        alt: 'a16z tech week',
+        file: 'first-ever-nice-tie.jpeg',
+        title: 'the tie',
+        date: 'february 2026',
+        sortDate: '2026-02',
+        location: 'uc irvine',
+        chapter: 'finance / friendship',
+        shortCaption: 'a gift from a friend after the investment banking offer.',
+        expandedCaption: 'this was the first nice tie i owned, gifted by a friend after i received my investment banking offer. small objects can hold big transitions. this one represented friendship, progress, and the feeling that a new chapter was becoming real.',
+        meaning: 'friendship, milestone, professional growth.',
+        tone: 'warm, understated.',
+        alt: 'a tie gifted to tyler after his investment banking offer.',
     },
-].map((item, i) => ({ ...item, id: i + 1 }));
+    {
+        file: 'first-hackathon.jpeg',
+        title: 'first hackathon',
+        date: 'march 2026',
+        sortDate: '2026-03',
+        location: 'hackathon',
+        chapter: 'technology / building',
+        shortCaption: 'the first time coding felt like a world i needed to enter.',
+        expandedCaption: 'this was my first hackathon. i met my first real cs friends, built something under pressure, and felt both excited and behind. that feeling mattered. it made me want to keep learning, keep building, and take technology more seriously as part of my future.',
+        meaning: 'technology, humility, building, new direction.',
+        tone: 'honest, ambitious.',
+        alt: 'tyler at his first hackathon.',
+    },
+    {
+        file: 'brian-johnson.jpeg',
+        title: 'health as ambition',
+        date: 'april 2026',
+        sortDate: '2026-04',
+        location: 'conference',
+        chapter: 'health / self-improvement',
+        shortCaption: 'a reminder that ambition does not work without health.',
+        expandedCaption: 'meeting brian johnson made me think more seriously about health, sleep, food, and the systems that support a long life. the event reminded me that working hard means very little if i do not learn how to protect my energy, body, and attention.',
+        meaning: 'health, longevity, discipline beyond career.',
+        tone: 'reflective, mature.',
+        alt: 'tyler at a conference focused on health and longevity.',
+    },
+    {
+        file: 'a16z-tech-week.jpeg',
+        title: 'tech week',
+        date: 'june 2026',
+        sortDate: '2026-06',
+        location: 'new york city',
+        chapter: 'technology / new york',
+        shortCaption: 'first week in a new city, putting myself in bigger rooms.',
+        expandedCaption: 'this was during a16z tech week in new york. it was one of my first weeks living in a new city, meeting founders, attending events, and putting myself into rooms that once felt far away. new york made ambition feel physical.',
+        meaning: 'exposure, courage, entering new rooms.',
+        tone: 'cinematic, ambitious, alive.',
+        alt: 'tyler at a16z tech week in new york city.',
+    },
+    {
+        file: 'ysl-art.jpeg',
+        title: 'yves saint laurent',
+        date: 'june 2026',
+        sortDate: '2026-06',
+        location: 'museum / new york',
+        chapter: 'art / legacy',
+        shortCaption: 'thinking about what it means for a name to become a world.',
+        expandedCaption: 'this photo made me think about legacy. yves saint laurent built more than a brand. he built a language, a feeling, and a world people still walk through. i liked this image because it connected taste, work, and the long arc of becoming known for something.',
+        meaning: 'taste, legacy, art, brand-building.',
+        tone: 'thoughtful, polished.',
+        alt: 'yves saint laurent exhibit detail.',
+    },
+].map((item, i) => ({
+    ...item,
+    id: i + 1,
+    num: String(i + 1).padStart(3, '0'),
+    image: 'Photos/' + item.file,
+    thumb: 'Photos/thumbs/' + item.file,
+}));
 
 /* =============================================================
-   LAYOUT CONFIG
-   Each row config defines [n] slot objects:
-     rot   – CSS rotation in degrees
-     mt    – margin-top in px (vertical stagger)
-     ml    – margin-left (CSS string, e.g. "6%")
-     wFrac – card width as fraction of archive-canvas width
-============================================================= */
-const ROW_TEMPLATES = [
-    // 5-up default
-    [
-        { rot: -1.4, mt: 4, ml: '0.5%', wFrac: 0.168 },
-        { rot:  1.1, mt: 0, ml: '1%',   wFrac: 0.162 },
-        { rot: -0.7, mt: 6, ml: '1%',   wFrac: 0.167 },
-        { rot:  1.6, mt: 2, ml: '1%',   wFrac: 0.162 },
-        { rot: -1.0, mt: 5, ml: '1%',   wFrac: 0.165 },
-    ],
-    // 5-up alternate
-    [
-        { rot:  1.2, mt: 0, ml: '0.5%', wFrac: 0.165 },
-        { rot: -1.6, mt: 5, ml: '1%',   wFrac: 0.162 },
-        { rot:  0.5, mt: 2, ml: '1%',   wFrac: 0.168 },
-        { rot: -1.1, mt: 4, ml: '1%',   wFrac: 0.162 },
-        { rot:  1.8, mt: 1, ml: '1%',   wFrac: 0.165 },
-    ],
-    // 5-up tighter stagger
-    [
-        { rot: -1.8, mt: 2, ml: '0.5%', wFrac: 0.162 },
-        { rot:  1.3, mt: 0, ml: '1%',   wFrac: 0.167 },
-        { rot: -0.5, mt: 5, ml: '1%',   wFrac: 0.162 },
-        { rot:  1.9, mt: 1, ml: '1%',   wFrac: 0.165 },
-        { rot: -1.2, mt: 4, ml: '1%',   wFrac: 0.162 },
-    ],
-    // 4-up (remainder)
-    [
-        { rot: -1.2, mt: 4, ml: '1%',   wFrac: 0.175 },
-        { rot:  1.5, mt: 0, ml: '1.5%', wFrac: 0.175 },
-        { rot: -0.8, mt: 6, ml: '1.5%', wFrac: 0.172 },
-        { rot:  1.0, mt: 2, ml: '1.5%', wFrac: 0.172 },
-    ],
-    // 3-up (remainder)
-    [
-        { rot: -1.0, mt: 3, ml: '2%',   wFrac: 0.180 },
-        { rot:  1.4, mt: 0, ml: '2%',   wFrac: 0.180 },
-        { rot: -0.7, mt: 5, ml: '2%',   wFrac: 0.178 },
-    ],
-    // 2-up (remainder)
-    [
-        { rot:  0.9, mt: 0, ml: '2%',   wFrac: 0.182 },
-        { rot: -1.3, mt: 4, ml: '2%',   wFrac: 0.180 },
-    ],
-    // 1-up (remainder)
-    [
-        { rot: -0.8, mt: 2, ml: '2%',   wFrac: 0.185 },
-    ],
-];
-
-/* =============================================================
-   RENDER — continuous 5-per-row grid, no year dividers
+   RENDER — chronological gallery wall, uniform film-still cards.
+   the CSS grid handles layout (5 / 4 / 2 columns by viewport),
+   so render runs once and never needs to re-run on resize.
 ============================================================= */
 function render() {
     const canvas = document.getElementById('archiveCanvas');
     canvas.innerHTML = '';
-
-    const ROW_SIZE = 5;
-    const rows = [];
-    for (let i = 0; i < archiveItems.length; i += ROW_SIZE) {
-        rows.push(archiveItems.slice(i, i + ROW_SIZE));
-    }
-
-    rows.forEach((rowItems, rIdx) => {
-        const count = rowItems.length;
-        let tpl;
-        if      (count >= 5) tpl = ROW_TEMPLATES[rIdx % 3];
-        else if (count === 4) tpl = ROW_TEMPLATES[3];
-        else if (count === 3) tpl = ROW_TEMPLATES[4];
-        else if (count === 2) tpl = ROW_TEMPLATES[5];
-        else                  tpl = ROW_TEMPLATES[6];
-
-        canvas.appendChild(buildRow(rowItems, tpl));
-    });
+    archiveItems.forEach(item => canvas.appendChild(buildStill(item)));
+    observeCards();
 }
 
-function buildRow(items, tpl) {
-    const row = document.createElement('div');
-    row.className = 'polaroid-row';
-
-    const canvasW = document.getElementById('archiveCanvas').offsetWidth || 900;
-
-    items.forEach((item, j) => {
-        const slot = tpl[j] || tpl[tpl.length - 1];
-        const w = Math.max(90, Math.min(210, Math.round(canvasW * slot.wFrac)));
-        const card = buildPolaroid(item, slot, w);
-        row.appendChild(card);
-    });
-
-    return row;
-}
-
-function buildPolaroid(item, slot, w) {
+function buildStill(item) {
     const card = document.createElement('div');
     card.className = 'polaroid';
-    card.style.width = w + 'px';
-    card.style.marginTop = slot.mt + 'px';
-    card.style.marginLeft = slot.ml;
-    card.style.transform = `rotate(${slot.rot}deg)`;
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `${item.title}, ${item.date}`);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'polaroid-photo-wrap';
 
     const img = document.createElement('img');
-    img.className = 'polaroid-photo square'; // always square in grid
-    img.src = item.image;
+    img.className = 'polaroid-photo';
+    img.src = item.thumb;
     img.alt = item.alt || '';
     img.loading = 'lazy';
     img.decoding = 'async';
-    img.onerror = function() {
+    img.width = 560;
+    img.height = 560;
+    // thumbnail missing → fall back to the original, then to a placeholder
+    img.onerror = function () {
+        if (this.src.indexOf('/thumbs/') !== -1) {
+            this.src = item.image;
+            return;
+        }
         this.style.display = 'none';
         const fallback = document.createElement('div');
         fallback.className = 'polaroid-fallback';
         fallback.textContent = item.title || '';
-        card.insertBefore(fallback, this.nextSibling);
+        wrap.appendChild(fallback);
     };
+
+    const hoverCap = document.createElement('div');
+    hoverCap.className = 'polaroid-hover-cap';
+    hoverCap.textContent = item.shortCaption || '';
+
+    wrap.appendChild(img);
+    wrap.appendChild(hoverCap);
 
     const caption = document.createElement('div');
     caption.className = 'polaroid-caption';
     caption.innerHTML = `
+        <div class="polaroid-num">${item.num}</div>
+        <div class="polaroid-title">${item.title}</div>
         <div class="polaroid-date">${item.date}</div>
         ${item.location ? `<div class="polaroid-loc">${item.location}</div>` : ''}
     `;
 
-    card.appendChild(img);
+    card.appendChild(wrap);
     card.appendChild(caption);
 
-    // hover lift preserving rotation
-    card.addEventListener('mouseenter', () => {
-        card.style.transform = `rotate(${slot.rot}deg) translateY(-7px)`;
-        card.style.zIndex = '10';
-        card.style.boxShadow = '0 2px 6px rgba(58,53,48,0.08), 0 12px 40px rgba(58,53,48,0.14), 0 24px 60px rgba(58,53,48,0.08)';
-    });
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = `rotate(${slot.rot}deg)`;
-        card.style.zIndex = '';
-        card.style.boxShadow = '';
-    });
-
     card.addEventListener('click', () => openModal(item));
+    card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(item);
+        }
+    });
 
     return card;
+}
+
+/* soft fade-in as cards enter the viewport */
+let _observer;
+function observeCards() {
+    if (_observer) _observer.disconnect();
+    if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.polaroid').forEach(c => c.classList.add('in-view'));
+        return;
+    }
+    _observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                _observer.unobserve(entry.target);
+            }
+        });
+    }, { rootMargin: '60px' });
+    document.querySelectorAll('.polaroid').forEach(c => _observer.observe(c));
 }
 
 /* =============================================================
@@ -799,19 +925,32 @@ function openModal(item) {
 
 function populateModal(item) {
     const photo = document.getElementById('mPhoto');
-    photo.src = item.image;
+    photo.src = item.image; // full-quality original in the detail view
     photo.alt = item.alt || '';
-    photo.className = `card-img ${item.aspect}`;
 
+    document.getElementById('mNum').textContent      = item.num;
     document.getElementById('mTitle').textContent    = item.title || '';
-    document.getElementById('mDate').textContent     = item.date;
+    document.getElementById('mDate').textContent     = item.date || '';
     document.getElementById('mLoc').textContent      = item.location || '';
-    document.getElementById('bWhat').textContent     = item.whatItIs;
-    document.getElementById('bMeaning').textContent  = item.meaning;
-    document.getElementById('bReflection').textContent = item.reflection;
-    document.getElementById('mCounter').textContent  = `${activeIndex + 1} / ${archiveItems.length}`;
+    document.getElementById('mShort').textContent    = item.shortCaption || '';
+    document.getElementById('bNum').textContent      = 'no. ' + item.num;
+    document.getElementById('bChapter').textContent  = item.chapter || '';
+    document.getElementById('bStory').textContent    = item.expandedCaption || '';
+    document.getElementById('bMeaning').textContent  = item.meaning || '';
+    document.getElementById('mCounter').textContent  = `${item.num} / ${String(archiveItems.length).padStart(3, '0')}`;
     document.getElementById('prevBtn').disabled      = activeIndex === 0;
     document.getElementById('nextBtn').disabled      = activeIndex === archiveItems.length - 1;
+
+    preloadNeighbors();
+}
+
+function preloadNeighbors() {
+    [activeIndex - 1, activeIndex + 1].forEach(i => {
+        if (i >= 0 && i < archiveItems.length) {
+            const pre = new Image();
+            pre.src = archiveItems[i].image;
+        }
+    });
 }
 
 function closeModal() {
@@ -855,11 +994,23 @@ function onOverlayClick(e) {
    KEYBOARD + SWIPE
 ============================================================= */
 document.addEventListener('keydown', e => {
+    // escape closes the index drawer first if it is open
+    if (e.key === 'Escape' && document.getElementById('menu').classList.contains('active')) {
+        closeMenu();
+        return;
+    }
     if (!document.getElementById('modalOverlay').classList.contains('active')) return;
     if (e.key === 'Escape')      closeModal();
     if (e.key === 'ArrowRight')  navigate(1);
     if (e.key === 'ArrowLeft')   navigate(-1);
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+});
+
+// clicking outside the index closes it
+document.addEventListener('click', e => {
+    const menu = document.getElementById('menu');
+    if (!menu.classList.contains('active')) return;
+    if (!menu.contains(e.target) && !e.target.closest('.hamburger')) closeMenu();
 });
 
 let swipeX = 0;
@@ -885,21 +1036,15 @@ function closeMenu() {
 /* =============================================================
    INIT
 ============================================================= */
-let _rendering = false;
-function safeRender() {
-    if (_rendering) return;
-    _rendering = true;
-    render();
-    _rendering = false;
+function setPageMeta() {
+    const first = archiveItems[0].sortDate.slice(0, 4);
+    const last  = archiveItems[archiveItems.length - 1].sortDate.slice(0, 4);
+    document.getElementById('pageMeta').textContent =
+        `${archiveItems.length} photographs · ${first} – ${last}`;
 }
 
-safeRender();
-
-let _resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(_resizeTimer);
-    _resizeTimer = setTimeout(safeRender, 120);
-});
+setPageMeta();
+render();
 </script>
 </body>
 </html>
