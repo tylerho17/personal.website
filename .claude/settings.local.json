@@ -4,7 +4,10 @@
       "mcp__Claude_Preview__preview_start",
       "Bash(cp \"/Users/tylerho/Desktop/commercial-cleaning-value-creation-plan.pdf\" \"/Users/tylerho/Desktop/Personal Website/commercial-cleaning-value-creation-plan.pdf\" && ls \"/Users/tylerho/Desktop/Personal Website/\")",
       "mcp__Claude_in_Chrome__navigate",
-      "mcp__Claude_in_Chrome__get_page_text"
+      "mcp__Claude_in_Chrome__get_page_text",
+      "Bash(awk '{print $5, $9}')",
+      "Bash(sips --version)",
+      "Bash(sips -s format jpeg -s formatOptions 75 -Z 1600 \"first-sneaker-business.png\" --out \"first-sneaker-business.jpeg\")"
     ]
   }
 }

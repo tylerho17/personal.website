@@ -130,6 +130,18 @@
             background: #e4dfd8;
         }
         .polaroid-photo.square   { aspect-ratio: 1 / 1; }
+        .polaroid-fallback {
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            background: #ede8e2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #b8b0a8;
+            text-align: center;
+            padding: 8px;
+        }
         .polaroid-photo.portrait { aspect-ratio: 3 / 4; }
         .polaroid-photo.landscape { aspect-ratio: 4 / 3; }
 
@@ -395,203 +407,232 @@
    DATA
    Add new entries here. Oldest first.
 ============================================================= */
-const ARCHIVE = [
+// ─── edit this list to change photo order, dates, locations, and reflections ───
+// array order controls visual order (top-left → bottom-right, oldest first)
+// to add a photo: copy any block, change the fields, add it in the right position
+// to reorder: cut and paste blocks into the order you want
+const archiveItems = [
     {
-        id: 1,
-        image: 'https://picsum.photos/seed/tho-01/600/600',
-        aspect: 'square',
-        date: 'june 2018',
-        year: 2018,
-        location: 'anaheim, california',
-        title: 'the garage',
-        description: 'the garage where we kept everything that didn\'t fit anywhere else.',
-        meaning: 'the place i first understood that space shapes thought. everything in that garage was waiting to become something else.',
-        reflection: 'i think a lot about what we hold onto and why. this garage had my dad\'s tools, my old shoes, boxes of books. all of it patient.',
-        alt: 'a garage in anaheim filled with boxes and tools',
+        image: 'photos/first-sneaker-business.jpeg',
+        date: '',
+        location: '',
+        title: 'first sneaker business',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'first sneaker business',
     },
     {
-        id: 2,
-        image: 'https://picsum.photos/seed/tho-02/480/640',
-        aspect: 'portrait',
-        date: 'august 2018',
-        year: 2018,
-        location: 'los angeles, california',
-        title: 'first train ride alone',
-        description: 'first time taking the metro by myself at 15.',
-        meaning: 'small freedom. the kind you don\'t realize is big until later.',
-        reflection: 'independence starts with a transit card and no one to answer to for an afternoon.',
-        alt: 'blurred metro window at dusk',
+        image: 'photos/math-competition.jpeg',
+        date: '',
+        location: '',
+        title: 'math competition',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'math competition',
     },
     {
-        id: 3,
-        image: 'https://picsum.photos/seed/tho-03/640/480',
-        aspect: 'landscape',
-        date: 'november 2019',
-        year: 2019,
-        location: 'orange county, california',
-        title: 'the book',
-        description: 'rich dad poor dad, the edition my dad gave me in third grade.',
-        meaning: 'the first time i thought about money as something you could understand, not just earn.',
-        reflection: 'that book had dog-ears and margin notes i didn\'t write. someone else had read it before me. i thought about what they built.',
-        alt: 'worn paperback book open on a table',
+        image: 'photos/family.jpg',
+        date: '',
+        location: '',
+        title: 'family',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'family',
     },
     {
-        id: 4,
-        image: 'https://picsum.photos/seed/tho-04/600/600',
-        aspect: 'square',
-        date: 'march 2020',
-        year: 2020,
-        location: 'anaheim, california',
-        title: 'lockdown light',
-        description: 'light through the kitchen window during the first week of lockdown.',
-        meaning: 'everything slowed down and i finally noticed what was always there.',
-        reflection: 'the pandemic made me a better observer. bad for everything else. good for that.',
-        alt: 'soft morning light through a kitchen window',
+        image: 'photos/first-ever-nice-tie.jpeg',
+        date: '',
+        location: '',
+        title: 'first ever nice tie',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'first ever nice tie',
     },
     {
-        id: 5,
-        image: 'https://picsum.photos/seed/tho-05/480/640',
-        aspect: 'portrait',
-        date: 'july 2021',
-        year: 2021,
-        location: 'irvine, california',
-        title: 'move-in day',
-        description: 'my dorm room at uc irvine, half-empty.',
-        meaning: 'blank space is possibility. i stood there a long time before unpacking.',
-        reflection: 'i learned more from the people i lived near than any class. proximity is underrated.',
-        alt: 'empty dorm room with morning sunlight',
+        image: 'photos/startup-days.jpeg',
+        date: '',
+        location: '',
+        title: 'startup days',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'startup days',
     },
     {
-        id: 6,
-        image: 'https://picsum.photos/seed/tho-06/600/600',
-        aspect: 'square',
-        date: 'october 2021',
-        year: 2021,
-        location: 'irvine, california',
-        title: 'late night library',
-        description: 'langson library at 2am during recruiting season.',
-        meaning: 'i sent 200 emails that fall. one changed my life.',
-        reflection: 'the most important work often happens in the quietest, most unglamorous places.',
-        alt: 'empty library desks at night with fluorescent light',
+        image: 'photos/business-fraternity.JPG',
+        date: '',
+        location: '',
+        title: 'business fraternity',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'business fraternity',
     },
     {
-        id: 7,
-        image: 'https://picsum.photos/seed/tho-07/640/480',
-        aspect: 'landscape',
-        date: 'january 2022',
-        year: 2022,
-        location: 'anaheim, california',
-        title: 'arthritis 5k setup',
-        description: 'setting up for the arthritis 5k at angels stadium before sunrise.',
-        meaning: 'sometimes you make something personal into something larger. this was one of those times.',
-        reflection: 'i thought i was doing this for my mom. eventually i understood i was also doing it for myself.',
-        alt: 'early morning stadium setup with banners and cones',
+        image: 'photos/first-hackathon.jpeg',
+        date: '',
+        location: '',
+        title: 'first hackathon',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'first hackathon',
     },
     {
-        id: 8,
-        image: 'https://picsum.photos/seed/tho-08/600/600',
-        aspect: 'square',
-        date: 'june 2022',
-        year: 2022,
-        location: 'new york city',
-        title: 'first morning in new york',
-        description: 'corner of bleecker and 6th, 8am, first morning in the city.',
-        meaning: 'i understood immediately why people fall for this place.',
-        reflection: 'cities have personalities. new york\'s feels like pressure that becomes energy if you let it.',
-        alt: 'busy new york street corner at morning',
+        image: 'photos/student-investment-fund.jpeg',
+        date: '',
+        location: '',
+        title: 'student investment fund',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'student investment fund',
     },
     {
-        id: 9,
-        image: 'https://picsum.photos/seed/tho-09/480/640',
-        aspect: 'portrait',
-        date: 'december 2022',
-        year: 2022,
-        location: 'anaheim, california',
-        title: 'christmas table',
-        description: 'christmas dinner table, my grandmother\'s dishes.',
-        meaning: 'you can leave, grow, and return to find the same warmth.',
-        reflection: 'i don\'t take this for granted anymore.',
-        alt: 'holiday dinner table with warm lighting and ceramic dishes',
+        image: 'photos/first-stock-pitch.jpeg',
+        date: '',
+        location: '',
+        title: 'first stock pitch',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'first stock pitch',
     },
     {
-        id: 10,
-        image: 'https://picsum.photos/seed/tho-10/640/480',
-        aspect: 'landscape',
-        date: 'april 2023',
-        year: 2023,
-        location: 'san francisco, california',
-        title: 'first founder meeting',
-        description: 'a coffee shop in soma. first real conversation with a founder.',
-        meaning: 'i learned that vision without execution is just a dream, and i wanted both.',
-        reflection: 'the best conversations feel like collaboration even when you\'re just listening.',
-        alt: 'coffee shop table with notebooks and a pour-over',
+        image: 'photos/leading-a-team.jpeg',
+        date: '',
+        location: '',
+        title: 'leading a team',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'leading a team',
     },
     {
-        id: 11,
-        image: 'https://picsum.photos/seed/tho-11/600/600',
-        aspect: 'square',
-        date: 'september 2023',
-        year: 2023,
-        location: 'irvine, california',
-        title: 'graduation',
-        description: 'bren events center, waiting in the corridor before the ceremony.',
-        meaning: 'the feeling wasn\'t joy. it was something quieter. readiness.',
-        reflection: 'endings are always also beginnings. i was more focused on the next thing than the ceremony.',
-        alt: 'graduation gown in a crowded arena hallway',
+        image: 'photos/stan-event.jpeg',
+        date: '',
+        location: '',
+        title: 'stan event',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'stan event',
     },
     {
-        id: 12,
-        image: 'https://picsum.photos/seed/tho-12/480/640',
-        aspect: 'portrait',
-        date: 'february 2024',
-        year: 2024,
-        location: 'new york city',
-        title: 'february window',
-        description: 'my window on the upper east side, winter.',
-        meaning: 'it was cold and i didn\'t care. this city in winter is its most honest.',
-        reflection: 'there\'s something about discomfort that clarifies what you actually want.',
-        alt: 'winter new york skyline through a frost-rimmed window',
+        image: 'photos/crosspoint-financial.jpeg',
+        date: '',
+        location: '',
+        title: 'crosspoint financial',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'crosspoint financial',
     },
     {
-        id: 13,
-        image: 'https://picsum.photos/seed/tho-13/640/480',
-        aspect: 'landscape',
-        date: 'july 2024',
-        year: 2024,
-        location: 'new york city',
-        title: 'central park tuesday',
-        description: 'central park, a tuesday afternoon in july.',
-        meaning: 'i finally understood what it means to be unhurried in a hurried place.',
-        reflection: 'the people who looked most at peace in new york were the ones who had stopped trying to keep up.',
-        alt: 'central park lawn with people and dappled light',
+        image: 'photos/reading-machiavelli.jpeg',
+        date: '',
+        location: '',
+        title: 'reading machiavelli',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'reading machiavelli',
     },
     {
-        id: 14,
-        image: 'https://picsum.photos/seed/tho-14/600/600',
-        aspect: 'square',
-        date: 'march 2025',
-        year: 2025,
-        location: 'los angeles, california',
-        title: 'pizza and ideas',
-        description: 'dinner with founders somewhere in silverlake.',
-        meaning: 'most good ideas i\'ve heard started like this. informal, late, around food.',
-        reflection: 'you learn more about someone\'s vision at dinner than in a pitch deck.',
-        alt: 'pizza and notebooks on a restaurant table at night',
+        image: 'photos/mark-rothko.jpeg',
+        date: '',
+        location: '',
+        title: 'mark rothko',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'mark rothko',
     },
     {
-        id: 15,
-        image: 'https://picsum.photos/seed/tho-15/480/640',
-        aspect: 'portrait',
-        date: 'january 2026',
-        year: 2026,
-        location: 'new york city',
-        title: 'gap year begins',
-        description: 'first morning of the gap year. coffee, notebook, nothing planned.',
-        meaning: 'intentional uncertainty. rare and uncomfortable and worth it.',
-        reflection: 'i wrote the word "begin" at the top of a blank page and didn\'t write anything else for an hour.',
-        alt: 'notebook and coffee on a marble countertop, morning light',
+        image: 'photos/ysl-art.jpeg',
+        date: '',
+        location: '',
+        title: 'ysl art',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'ysl art',
     },
-];
+    {
+        image: 'photos/joe-day-yale-professor.jpeg',
+        date: '',
+        location: '',
+        title: 'joe day — yale professor',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'joe day yale professor',
+    },
+    {
+        image: 'photos/movie:marketing-production-intern.jpeg',
+        date: '',
+        location: '',
+        title: 'movie & marketing production intern',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'movie marketing production intern',
+    },
+    {
+        image: 'photos/cbcapital.jpeg',
+        date: '',
+        location: '',
+        title: 'cb capital',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'cb capital',
+    },
+    {
+        image: 'photos/2am-night-investmentbanking.jpeg',
+        date: '',
+        location: '',
+        title: '2am — investment banking',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: '2am night investment banking',
+    },
+    {
+        image: 'photos/IMG_2191.jpeg',
+        date: '',
+        location: '',
+        title: 'moment',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'photo',
+    },
+    {
+        image: 'photos/brian-johnson.jpeg',
+        date: '',
+        location: '',
+        title: 'brian johnson',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'brian johnson',
+    },
+    {
+        image: 'photos/a16z-tech-week.jpeg',
+        date: '',
+        location: '',
+        title: 'a16z tech week',
+        whatItIs: '',
+        meaning: '',
+        reflection: '',
+        alt: 'a16z tech week',
+    },
+].map((item, i) => ({ ...item, id: i + 1 }));
 
 /* =============================================================
    LAYOUT CONFIG
@@ -659,8 +700,8 @@ function render() {
 
     const ROW_SIZE = 5;
     const rows = [];
-    for (let i = 0; i < ARCHIVE.length; i += ROW_SIZE) {
-        rows.push(ARCHIVE.slice(i, i + ROW_SIZE));
+    for (let i = 0; i < archiveItems.length; i += ROW_SIZE) {
+        rows.push(archiveItems.slice(i, i + ROW_SIZE));
     }
 
     rows.forEach((rowItems, rIdx) => {
@@ -705,6 +746,14 @@ function buildPolaroid(item, slot, w) {
     img.src = item.image;
     img.alt = item.alt || '';
     img.loading = 'lazy';
+    img.decoding = 'async';
+    img.onerror = function() {
+        this.style.display = 'none';
+        const fallback = document.createElement('div');
+        fallback.className = 'polaroid-fallback';
+        fallback.textContent = item.title || '';
+        card.insertBefore(fallback, this.nextSibling);
+    };
 
     const caption = document.createElement('div');
     caption.className = 'polaroid-caption';
@@ -740,7 +789,7 @@ let activeIndex = 0;
 let cardFlipped = false;
 
 function openModal(item) {
-    activeIndex = ARCHIVE.findIndex(a => a.id === item.id);
+    activeIndex = archiveItems.findIndex(a => a.id === item.id);
     cardFlipped = false;
     document.getElementById('flipCard').classList.remove('flipped');
     populateModal(item);
@@ -757,12 +806,12 @@ function populateModal(item) {
     document.getElementById('mTitle').textContent    = item.title || '';
     document.getElementById('mDate').textContent     = item.date;
     document.getElementById('mLoc').textContent      = item.location || '';
-    document.getElementById('bWhat').textContent     = item.description;
+    document.getElementById('bWhat').textContent     = item.whatItIs;
     document.getElementById('bMeaning').textContent  = item.meaning;
     document.getElementById('bReflection').textContent = item.reflection;
-    document.getElementById('mCounter').textContent  = `${activeIndex + 1} / ${ARCHIVE.length}`;
+    document.getElementById('mCounter').textContent  = `${activeIndex + 1} / ${archiveItems.length}`;
     document.getElementById('prevBtn').disabled      = activeIndex === 0;
-    document.getElementById('nextBtn').disabled      = activeIndex === ARCHIVE.length - 1;
+    document.getElementById('nextBtn').disabled      = activeIndex === archiveItems.length - 1;
 }
 
 function closeModal() {
@@ -779,7 +828,7 @@ function flipCard() {
 
 function navigate(dir) {
     const next = activeIndex + dir;
-    if (next < 0 || next >= ARCHIVE.length) return;
+    if (next < 0 || next >= archiveItems.length) return;
     activeIndex = next;
     cardFlipped = false;
 
@@ -789,7 +838,7 @@ function navigate(dir) {
     card.style.transition = 'opacity 0.15s ease';
 
     setTimeout(() => {
-        populateModal(ARCHIVE[activeIndex]);
+        populateModal(archiveItems[activeIndex]);
         card.style.opacity = '1';
         // restore flip transition after fade
         setTimeout(() => {
