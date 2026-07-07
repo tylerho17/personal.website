@@ -199,6 +199,12 @@
             color: #8d99ab;
             flex-shrink: 0;
         }
+        .note-line .note-date {
+            font-size: 10px;
+            color: #b8b0a8;
+            letter-spacing: 0.08em;
+            flex-shrink: 0;
+        }
         .note-line .note-ext {
             font-size: 10px;
             color: #b8b0a8;
@@ -234,6 +240,8 @@
                 padding: 48px 24px 56px 56px;
             }
             .sheet::before { left: 40px; }
+            /* let the date + pdf tag wrap cleanly onto the next ruled line */
+            .note-line { flex-wrap: wrap; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -288,6 +296,7 @@
         <a class="note-line" href="commercial-cleaning-value-creation-plan.pdf" target="_blank" rel="noopener">
             <span class="note-num">001</span>
             <span>a value creation plan for commercial cleaning &amp; janitorial services</span>
+            <span class="note-date">june 14th, 2026</span>
             <span class="note-ext">pdf</span>
         </a>
 
