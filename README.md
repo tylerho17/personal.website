@@ -9,9 +9,9 @@ plain html / css / js. no frameworks, no build step, no dependencies. works on a
 | file | what it is |
 |---|---|
 | `index.html` | the letter — opening title card, then a short centered letter |
-| `archive.html` | photographs — chronological contact sheet with a viewing-room modal |
-| `field-notes.html` | notes — a notebook page holding real notes and future sections |
-| `selected-work.html` | work — intentionally empty room, reserved for coding projects |
+| `archive/index.html` (served at `/archive/`) | photographs — chronological contact sheet with a viewing-room modal |
+| `field-notes/index.html` (served at `/field-notes/`) | notes — a notebook page holding real notes and future sections |
+| `selected-work/index.html` (served at `/selected-work/`) | work — intentionally empty room, reserved for coding projects |
 | `index-redesign_23_1.html` | old homepage filename, now just a redirect to `index.html` |
 | `favicon.svg` | site favicon |
 | `Photos/` | original photographs (never renamed, never compressed below web quality) |
@@ -29,7 +29,7 @@ python3 -m http.server 4321
 
 ## how to maintain the archive
 
-everything lives in **one array** in `archive.html` — search for `const archiveItems`.
+everything lives in **one array** in `archive/index.html` (served at `/archive/`) — search for `const archiveItems`.
 
 each photo is one block:
 
