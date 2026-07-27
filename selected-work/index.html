@@ -4,18 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>selected work — tyler ho</title>
-    <meta name="description" content="selected work by tyler ho — tools, studies, and experiments. coding projects coming in.">
+    <meta name="description" content="selected work by tyler ho — tools, studies, and experiments.">
     <meta property="og:title" content="selected work — tyler ho">
-    <meta property="og:description" content="tools, studies, and experiments. coding projects coming in.">
+    <meta property="og:description" content="tools, studies, and experiments.">
     <meta property="og:type" content="website">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-        }
 
         body {
             background-color: #fefdfb;
@@ -24,6 +19,7 @@
             font-size: 14px;
             font-weight: 400;
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         /* ─── header ─── */
@@ -125,16 +121,11 @@
             line-height: 1.7;
         }
 
-        /* ─── the reserved room ─── */
+        /* ─── page ─── */
         main {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 100px 40px 80px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 130px 40px 80px;
             animation: fadeUp 0.7s ease both;
         }
 
@@ -143,33 +134,77 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        .room-eyebrow {
+        .page-eyebrow {
             font-size: 11px;
             color: #b8b0a8;
             letter-spacing: 0.09em;
-            margin-bottom: 18px;
-        }
-
-        .room-rule {
-            width: 24px;
-            height: 1px;
-            background: #d9d3cc;
-            margin: 0 auto 18px;
-        }
-
-        .room-line {
-            font-size: 14px;
-            color: #3a3530;
             margin-bottom: 8px;
         }
-
-        .room-sub {
+        .page-title {
+            font-size: 15px;
+            color: #3a3530;
+            margin-bottom: 6px;
+        }
+        .page-sub {
             font-size: 12px;
             color: #b8b0a8;
+            margin-bottom: 48px;
         }
 
+        /* ─── the work list — compact, field-notes scale ─── */
+        .work-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .work-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+            border-top: 1px solid #ede8e2;
+            text-decoration: none;
+            color: inherit;
+        }
+        .work-item:last-child { border-bottom: 1px solid #ede8e2; }
+
+        /* the clean white box around the logo */
+        .work-logo {
+            flex-shrink: 0;
+            width: 64px;
+            height: 64px;
+            background: #ffffff;
+            border: 1px solid #ede8e2;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px;
+            box-shadow: 0 1px 3px rgba(58,53,48,0.05);
+            transition: box-shadow 0.25s ease;
+        }
+        .work-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .work-item:hover .work-logo { box-shadow: 0 3px 10px rgba(58,53,48,0.10); }
+
+        .work-meta { min-width: 0; }
+        .work-name a {
+            font-size: 14px;
+            color: #3a3530;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .work-name a:hover { color: #46586e; }
+        .work-desc {
+            margin-top: 2px;
+            font-size: 12px;
+            color: #8a807a;
+            line-height: 1.5;
+        }
+
+        /* ─── responsive ─── */
         @media (max-width: 640px) {
             header { padding: 28px 24px; }
+            main { padding: 110px 20px 60px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -214,10 +249,22 @@
 </nav>
 
 <main>
-    <div class="room-eyebrow">selected work</div>
-    <div class="room-rule"></div>
-    <div class="room-line">coding projects coming in.</div>
-    <div class="room-sub">tools, studies, and experiments will live here soon.</div>
+    <div class="page-eyebrow">selected work</div>
+    <div class="page-title">tools, studies &amp; experiments</div>
+    <div class="page-sub">things i've built.</div>
+
+    <div class="work-list">
+
+        <!-- ─── AidPilot ─── -->
+        <div class="work-item">
+            <div class="work-logo"><img src="/Photos/aidpilot-logo.png" alt="AidPilot"></div>
+            <div class="work-meta">
+                <div class="work-name"><a href="https://aidpilot.app" target="_blank" rel="noopener">AidPilot</a></div>
+                <div class="work-desc">helps students understand their financial aid offers and file the fafsa.</div>
+            </div>
+        </div>
+
+    </div>
 </main>
 
 <script>
